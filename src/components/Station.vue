@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row items-center">
     <div class="mr-2">
-      {{title}}
+      <label :for="inputElementId">{{title}}</label>
     </div>
     <div>
       <input type="text" placeholder="Bahnhof/Haltestelle" :id="inputElementId"
