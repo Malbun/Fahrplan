@@ -9,9 +9,14 @@ export const getTimeAsString = (date: Date, seconds: boolean): string => {
     }
 }
 
-export const getDateAsString = (date: Date) => {
+export const getDateAsString = (date: Date): string => {
     const yyyy: string = String(date.getFullYear()).padStart(2, '0');
     const mm: string = String(date.getMonth() + 1).padStart(2, '0');
     const dd: string = String(date.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
+}
+
+export const inputStringToDate = (input: string): Date => {
+    const localDate = new Date(input);
+    return new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000);
 }
