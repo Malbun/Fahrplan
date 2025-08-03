@@ -10,6 +10,7 @@
 import { useApikeyStore } from "@/stores/ApikeyStore.js";
 import {useStationStore} from "@/stores/StationStore.js";
 import { useResultCountStore } from "@/stores/ResultCountStore.js";
+import { getTimeAsString } from "@/utils/DateUtils.ts";
 import { XMLParser } from "fast-xml-parser";
 import ArrivalTrain from "./ArrivalTrain.vue";
 import { h, render } from "vue";
@@ -87,11 +88,11 @@ async function run() {
       })
       .then(jsObject => {
         const stopEventResults = jsObject["OJP"]["OJPResponse"]["siri:ServiceDelivery"]["OJPStopEventDelivery"]["StopEventResult"];
-        console.log(stopEventResults);
+        //console.log(stopEventResults);
 
         const resultList = [];
         resultList.push({
-          serviceName: "Service",
+          serviceName: "Linie",
           origin: "Von",
           plannedQuay: "Gleis/Kante",
           estimatedArrival: "Progn. Ankunft",
@@ -104,12 +105,12 @@ async function run() {
           result.destination = stopEvent["Service"]["DestinationText"]["Text"];
           result.serviceName = stopEvent["Service"]["PublishedServiceName"]["Text"];
           const estimatedArrival = stopEvent["ThisCall"]["CallAtStop"]["ServiceArrival"]["EstimatedTime"];
-          result.timetabledArrival = getTimeAsString(new Date(stopEvent["ThisCall"]["CallAtStop"]["ServiceArrival"]["TimetabledTime"]));
+          result.timetabledArrival = getTimeAsString(new Date(stopEvent["ThisCall"]["CallAtStop"]["ServiceArrival"]["TimetabledTime"]), false);
 
           if (estimatedArrival == null) {
             result.estimatedArrival = result.timetabledArrival;
           } else {
-            result.estimatedArrival = getTimeAsString(new Date(estimatedArrival));
+            result.estimatedArrival = getTimeAsString(new Date(estimatedArrival), true);
           }
 
           try {
@@ -137,7 +138,7 @@ async function run() {
 
       });
 
-  console.log(parsedResults);
+  //console.log(parsedResults);
 
   const resultContainer = document.getElementById("resultContainer");
 
@@ -149,14 +150,6 @@ async function run() {
 
   const rootVNode = h('div', {}, nodes);
   render(rootVNode, resultContainer);
-}
-
-
-function getTimeAsString(date) {
-  const hh = String(date.getHours()).padStart(2, '0');
-  const mm = String(date.getMinutes()).padStart(2, '0');
-  const ss = String(date.getSeconds()).padStart(2, '0');
-  return `${hh}:${mm}:${ss}`;
 }
 </script>
 

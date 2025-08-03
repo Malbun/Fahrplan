@@ -10,6 +10,7 @@
 import { useApikeyStore } from "@/stores/ApikeyStore.js";
 import {useStationStore} from "@/stores/StationStore.js";
 import { useResultCountStore } from "@/stores/ResultCountStore.js";
+import { getTimeAsString } from "@/utils/DateUtils.ts";
 import { XMLParser } from "fast-xml-parser";
 import { h, render } from "vue";
 import DepartureTrain from "./DepartureTrain.vue";
@@ -91,7 +92,7 @@ async function run() {
 
         const resultList = [];
         resultList.push({
-          serviceName: "Service",
+          serviceName: "Linie",
           destination: "Nach",
           plannedQuay: "Gleis/Kante",
           estimatedDeparture: "Progn. Abfahrt",
@@ -104,12 +105,12 @@ async function run() {
           result.destination = stopEvent["Service"]["DestinationText"]["Text"];
           result.serviceName = stopEvent["Service"]["PublishedServiceName"]["Text"];
           const estimatedDeparture = stopEvent["ThisCall"]["CallAtStop"]["ServiceDeparture"]["EstimatedTime"];
-          result.timetabledDeparture = getTimeAsString(new Date(stopEvent["ThisCall"]["CallAtStop"]["ServiceDeparture"]["TimetabledTime"]));
+          result.timetabledDeparture = getTimeAsString(new Date(stopEvent["ThisCall"]["CallAtStop"]["ServiceDeparture"]["TimetabledTime"]), false);
 
           if (estimatedDeparture == null) {
             result.estimatedDeparture = result.timetabledDeparture;
           } else {
-            result.estimatedDeparture = getTimeAsString(new Date(estimatedDeparture));
+            result.estimatedDeparture = getTimeAsString(new Date(estimatedDeparture), true);
           }
 
           try {
@@ -136,14 +137,6 @@ async function run() {
 
   const rootVNode = h('div', {}, nodes);
   render(rootVNode, resultContainer);
-}
-
-
-function getTimeAsString(date) {
-  const hh = String(date.getHours()).padStart(2, '0');
-  const mm = String(date.getMinutes()).padStart(2, '0');
-  const ss = String(date.getSeconds()).padStart(2, '0');
-  return `${hh}:${mm}:${ss}`;
 }
 </script>
 
