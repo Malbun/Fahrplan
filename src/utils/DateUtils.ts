@@ -2,6 +2,9 @@ export const getTimeAsString = (date: Date, seconds: boolean): string => {
     const hh: string = String(date.getHours()).padStart(2, '0');
     const mm: string = String(date.getMinutes()).padStart(2, '0');
     const ss: string = String(date.getSeconds()).padStart(2, '0');
+    if (isNaN(date.getHours())) {
+        return '';
+    }
     if (seconds) {
         return `${hh}:${mm}:${ss}`;
     } else {
@@ -17,6 +20,5 @@ export const getDateAsString = (date: Date): string => {
 }
 
 export const inputStringToDate = (input: string): Date => {
-    const localDate = new Date(input);
-    return new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000);
+    return new Date(input);
 }
