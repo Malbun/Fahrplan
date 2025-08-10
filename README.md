@@ -1,1 +1,2 @@
 # Fahrplan
+Swiss Timetable App
