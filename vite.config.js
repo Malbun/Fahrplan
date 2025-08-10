@@ -9,6 +9,7 @@ export default defineConfig({
       vue(),
       tailwindcss()
   ],
+  base: '/Fahrplan/',
   resolve: {
     alias: [
       {
