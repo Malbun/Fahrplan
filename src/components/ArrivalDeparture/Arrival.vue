@@ -16,6 +16,7 @@ import ArrivalDepartureTrain from "./ArrivalDepartureTrain.vue";
 import { h, render } from "vue";
 import {useDateStore} from "@/stores/DateStore.js";
 import {processCallAtStop} from "@/utils/ArrivalDepartureUtils.js";
+import {getStationDetails} from "@/utils/StationUtils.js";
 
 
 const apikeyStore = useApikeyStore();
@@ -25,20 +26,7 @@ const dateStore = useDateStore();
 
 async function run() {
 
-  const didokRequestURL = `https://data.sbb.ch/api/explore/v2.1/catalog/datasets/dienststellen-gemass-opentransportdataswiss/records?select=designationofficial, number&limit=20&refine=designationofficial:${stationStore.station}`
-  const didokResult = await fetch(didokRequestURL, {
-    method: "GET"
-  })
-      .then(res => res.text())
-      .then(json => {
-        return JSON.parse(json);
-      })
-      .then(jsObject => {
-        const result = {};
-        result.didok = jsObject["results"][0]["number"];
-        result.stationName = jsObject["results"][0]["designationofficial"];
-        return result;
-      });
+  const didokResult = await getStationDetails(stationStore.station);
 
   const currentDate = new Date();
 
