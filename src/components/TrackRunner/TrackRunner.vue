@@ -16,25 +16,29 @@ const props = defineProps({
 })
 
 const mainContainerId = `TrackRunnerMainContainer-${props.id}`
+let runnerCounter = -1;
 
 onMounted(showView);
 
 onUpdated(showView)
 
 function showView() {
-  //console.log(props.calls);
+  runnerCounter++;
   const nodes = [];
+
   for (const station of props.calls) {
     // Checking for current mode
     if (props.arrival) {
       // Checking if stop should be displayed
       if (props.currentStation > station.order) {
         const currentProps = {
+          id: `TrackRunner-${props.id}:Call-${runnerCounter}`,
           name: station.name,
           timetabledArrival: getTimeAsString(new Date(station.timetabledArrival), true),
           estimatedArrival: getTimeAsString(new Date(station.estimatedArrival), true),
           timetabledDeparture: getTimeAsString(new Date(station.timetabledDeparture), true),
           estimatedDeparture: getTimeAsString(new Date(station.estimatedDeparture), true),
+          quay: String(station.plannedQuay),
           useClick: false,
         }
         nodes.push(h(TrackRunnerCall, currentProps, null));
@@ -49,6 +53,7 @@ function showView() {
           estimatedArrival: getTimeAsString(new Date(station.estimatedArrival), true),
           timetabledDeparture: getTimeAsString(new Date(station.timetabledDeparture), true),
           estimatedDeparture: getTimeAsString(new Date(station.estimatedDeparture), true),
+          quay: String(station.plannedQuay),
           useClick: true,
         }
         nodes.push(h(TrackRunnerCall, currentProps, null));
