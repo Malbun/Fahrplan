@@ -37,19 +37,13 @@ const quay = ref("");
 
 //console.log(props.train);
 
-renderQuay();
-
 onUpdated(() => {
   document.getElementById(trackRunnerID).style.display = "none";
   renderQuay();
 });
 
 onMounted(() => {
-  if (!String(props.train.plannedQuay).includes('/') && String(props.train.plannedQuay).includes('$!')) {
-    document.getElementById(quayID).style.color = "#ff1e1e"
-    document.getElementById(quayID).style.fontWeight = "bold";
-  }
-
+  renderQuay();
   document.getElementById(trackRunnerID).style.display = "none";
 });
 
@@ -58,7 +52,7 @@ function renderQuay() {
     const splitted = String(props.train.plannedQuay).split('$!');
     quay.value = splitted[1];
     if (!(props.train.plannedQuay).includes('/')) {
-
+      document.getElementById(quayID).style.color = "#ff1e1e";
     }
   } else quay.value = props.train.plannedQuay;
 }
