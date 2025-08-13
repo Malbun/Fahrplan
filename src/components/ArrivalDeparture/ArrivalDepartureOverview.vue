@@ -34,10 +34,5 @@ resultCountStore.set(15);
       <RouterView id="router-view">
       </RouterView>
     </div>
-
-
-    <noscript>
-      <p>Bitte aktiviere JavaScript in deinem Browser.</p>
-    </noscript>
   </div>
 </template>
