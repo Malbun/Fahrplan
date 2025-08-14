@@ -1,6 +1,6 @@
 <script setup>
 import {useApikeyStore} from "@/stores/ApikeyStore.js";
-import {getDateAsString, getTimeAsString, inputStringToDate} from "@/utils/DateUtils.ts";
+import {getDateAsString, getTimeAsString} from "@/utils/DateUtils.ts";
 import {useDateStore} from "@/stores/DateStore.js";
 
 const apikeyStore = useApikeyStore();
