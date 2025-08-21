@@ -11,7 +11,7 @@ const props = defineProps({
 
 <template>
   <div v-for="trip in props.trips">
-    <TripResult class="m-2 p-1.5 rounded-xl bg-gray-600" :trip="trip"/>
+    <TripResult class="mt-2 p-1.5 rounded-xl bg-gray-600" :trip="trip"/>
   </div>
 </template>
 

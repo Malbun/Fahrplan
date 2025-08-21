@@ -3,7 +3,7 @@
 import {getTimeAsString} from "@/utils/DateUtils.js";
 import {onMounted, onUpdated, ref} from "vue";
 import {BsPersonWalking} from "vue-icons-plus/bs";
-import LegList from "@/components/Trip/LegList.vue";
+import LegList from "@/components/Trip/LegView/LegList.vue";
 
 // props
 const props = defineProps({
@@ -24,14 +24,28 @@ const walkPrefix = ref(""); // stores the minutes to walk before the first timed
 const walkAfter = ref(""); // stores the minutes to walk after the las timed leg
 const startTime = ref(""); // stores the time from the start from the first timed leg
 const endTime = ref(""); // stores the time after the last timed leg
+const duration = ref(""); // stores the duration from the whole trip
 
 onMounted(renderInformation); // renders all information after the component has been mounted
 
-onUpdated(renderInformation); // renders all information after the component has been updated
+onUpdated(() => {
+  renderInformation(); // renders all information after the component has been updated
+  document.getElementById(legListId).style.display = "none"; // hide the leg list
+});
 
 // displays all information
 function renderInformation() {
   //console.log(props.trip);
+
+  const rawDuration = props.trip.duration; // access the duration in minutes
+  const hours = Math.floor(rawDuration / 60); // calculate the whole hours from the raw duration
+  const minutes = rawDuration % 60; // calculate the remaining minutes from the raw duration
+
+  if (hours === 0) { // checks if hours is 0
+    duration.value = `${minutes}min`; // only adds minutes to string
+  } else { // has 1 or more hours
+    duration.value = `${hours}h ${minutes}min`; // adds hours and minutes to string
+  }
 
   if (props.trip.legs[0].type === "timed") { // checks if the first leg is a timed leg
     renderFirstTimedLeg(0); // renders the first leg with the index for the first timed leg
@@ -114,6 +128,7 @@ function clicked() {
       </div>
       <div>{{getTimeAsString(new Date(startTime))}}</div>
     </div>
+    <div>{{duration}}</div>
     <div class="flex flex-row">
       <div>{{getTimeAsString(new Date(endTime))}}</div>
       <div class="flex flex-row ml-1" :id="walkAfterId">

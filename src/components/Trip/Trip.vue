@@ -226,7 +226,7 @@ function processTimedLeg(timedLeg) {
       if (!(stop["PlannedQuay"]["Text"] === stop["EstimatedQuay"]["Text"])) { // checks if the planned quay is not equal to the estimated quay
         call.quay = `${stop["PlannedQuay"]["Text"]}$!${stop["EstimatedQuay"]["Text"]}`; // set quay to '(plannedQuay)$!(estimatedQuay)'
       } else { // has estimated quay and timetabled quay, but they are the same
-        call.quay = stop["EstimatedQuay"]["Text"]; // set quay to estimated quay
+        call.quay = String(stop["EstimatedQuay"]["Text"]); // set quay to estimated quay
       }
     } else { // has no estimated quay
       if (Object.hasOwn(stop, "PlannedQuay")) { // checks if the stop has a planned quay field
