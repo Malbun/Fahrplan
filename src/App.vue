@@ -22,7 +22,9 @@ dateStore.set(`${dateString}T${timeString}`);
         <RouterLink to="/arrdep/" class="p-2 rounded-2xl hover:text-gray-100 hover:bg-gray-800 transition-all duration-300 m-0.5" active-class="bg-white">
           Ankunft- und Abfahrtsanzeiger
         </RouterLink>
-
+        <RouterLink to="/trip/" class="p-2 rounded-2xl hover:text-gray-100 hover:bg-gray-800 transition-all duration-300 m-0.5" active-class="bg-white">
+          Fahrplan
+        </RouterLink>
         <div class="m-0.5">
           <label for="datetime-input">Datum/Uhrzeit: </label>
           <input type="datetime-local" placeholder="Datum/Uhrzeit" id="datetime-input" v-model="dateStore.date"

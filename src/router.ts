@@ -2,6 +2,7 @@ import {createRouter, createWebHistory} from "vue-router";
 import Arrival from "./components/ArrivalDeparture/Arrival.vue";
 import Departure from "./components/ArrivalDeparture/Departure.vue";
 import ArrivalDepartureOverview from "./components/ArrivalDeparture/ArrivalDepartureOverview.vue";
+import Trip from "./components/Trip/Trip.vue";
 
 const routes = [
     {
@@ -17,12 +18,16 @@ const routes = [
                 component: Departure
             }
         ]
-    }
+    },
+    {
+        path: '/trip',
+        component: Trip,
+    },
 ]
 
 const router = createRouter({
     history: createWebHistory(),
-    routes,
+    routes
 });
 
 export default router;
