@@ -22,83 +22,84 @@
 </template>
 
 <script setup>
-import stationData from "@/data/stationData.json";
-import Fuse from "fuse.js";
-import { h, render } from "vue";
+  import stationData from "@/data/stationData.json";
+  import Fuse from "fuse.js";
+  import { h, render } from "vue";
 
-let mouseInSuggestions = 0;
-let mouseOutSuggestions = 0;
-let currentSuggestions = "Zürich HB";
+  let mouseInSuggestions = 0;
+  let mouseOutSuggestions = 0;
+  let currentSuggestions = "Zürich HB";
 
-const props = defineProps({
-  store: { type: Object, required: true },
-  title: { type: String, required: true },
-  id: { type: String, required: true },
-});
+  const props = defineProps({
+    store: { type: Object, required: true },
+    title: { type: String, required: true },
+    id: { type: String, required: true },
+  });
 
-const inputElementId = `input-${props.id}`;
-const suggestionsElementId = `suggestions-${props.id}`;
+  const inputElementId = `input-${props.id}`;
+  const suggestionsElementId = `suggestions-${props.id}`;
 
-props.store.set("");
+  props.store.set("");
 
-const fuse = new Fuse(stationData, {
-  includeScore: true,
-  keys: ["a", "l"],
-});
+  const fuse = new Fuse(stationData, {
+    includeScore: true,
+    keys: ["a", "l"],
+  });
 
-function onChange(element) {
-  props.store.set(element);
-  updateSuggestions();
-}
+  function onChange(element) {
+    props.store.set(element);
+    updateSuggestions();
+  }
 
-function updateSuggestions() {
-  const searchResult = fuse.search(
-    document.getElementById(inputElementId).value,
-  );
-  const shortenSearchResult = searchResult.slice(0, 10);
-
-  const nodes = [];
-  for (const singleResult of shortenSearchResult) {
-    nodes.push(
-      h(
-        "div",
-        {
-          onMouseenter: () => {
-            mouseInSuggestions++;
-            currentSuggestions = singleResult.item.l;
-          },
-          onMouseout: () => mouseOutSuggestions++,
-          class: "p-1 rounded-xl hover:bg-gray-200 duration-200 cursor-pointer",
-        },
-        singleResult.item.l,
-      ),
+  function updateSuggestions() {
+    const searchResult = fuse.search(
+      document.getElementById(inputElementId).value,
     );
+    const shortenSearchResult = searchResult.slice(0, 10);
+
+    const nodes = [];
+    for (const singleResult of shortenSearchResult) {
+      nodes.push(
+        h(
+          "div",
+          {
+            onMouseenter: () => {
+              mouseInSuggestions++;
+              currentSuggestions = singleResult.item.l;
+            },
+            onMouseout: () => mouseOutSuggestions++,
+            class:
+              "p-1 rounded-xl hover:bg-gray-200 duration-200 cursor-pointer",
+          },
+          singleResult.item.l,
+        ),
+      );
+    }
+
+    const nodeContainer = h("div", {}, nodes);
+    const suggestionContainer = document.getElementById(suggestionsElementId);
+    render(nodeContainer, suggestionContainer);
   }
 
-  const nodeContainer = h("div", {}, nodes);
-  const suggestionContainer = document.getElementById(suggestionsElementId);
-  render(nodeContainer, suggestionContainer);
-}
-
-function showSuggestions() {
-  updateSuggestions();
-  const input = document.getElementById(suggestionsElementId);
-  input.style.display = "block";
-}
-
-function hideSuggestions() {
-  const input = document.getElementById(suggestionsElementId);
-  input.style.display = "none";
-
-  if (mouseInSuggestions === mouseOutSuggestions + 1) {
-    document.getElementById(inputElementId).value = currentSuggestions;
-    props.store.set(currentSuggestions);
+  function showSuggestions() {
+    updateSuggestions();
+    const input = document.getElementById(suggestionsElementId);
+    input.style.display = "block";
   }
-}
+
+  function hideSuggestions() {
+    const input = document.getElementById(suggestionsElementId);
+    input.style.display = "none";
+
+    if (mouseInSuggestions === mouseOutSuggestions + 1) {
+      document.getElementById(inputElementId).value = currentSuggestions;
+      props.store.set(currentSuggestions);
+    }
+  }
 </script>
 
 <style scoped>
-.suggestion {
-  display: none;
-}
+  .suggestion {
+    display: none;
+  }
 </style>

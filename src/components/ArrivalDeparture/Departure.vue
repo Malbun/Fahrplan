@@ -12,28 +12,28 @@
 </template>
 
 <script setup>
-import { useApikeyStore } from "@/stores/ApikeyStore.js";
-import { useStationStore } from "@/stores/StationStore.js";
-import { useResultCountStore } from "@/stores/ResultCountStore.js";
-import { getTimeAsString, inputStringToDate } from "@/utils/DateUtils.ts";
-import { XMLParser } from "fast-xml-parser";
-import { h, render } from "vue";
-import { useDateStore } from "@/stores/DateStore.js";
-import ArrivalDepartureTrain from "@/components/ArrivalDeparture/ArrivalDepartureTrain.vue";
-import { processCallAtStop } from "@/utils/ArrivalDepartureUtils.js";
-import { getStationDetails } from "@/utils/StationUtils.js";
+  import { useApikeyStore } from "@/stores/ApikeyStore.js";
+  import { useStationStore } from "@/stores/StationStore.js";
+  import { useResultCountStore } from "@/stores/ResultCountStore.js";
+  import { getTimeAsString, inputStringToDate } from "@/utils/DateUtils.ts";
+  import { XMLParser } from "fast-xml-parser";
+  import { h, render } from "vue";
+  import { useDateStore } from "@/stores/DateStore.js";
+  import ArrivalDepartureTrain from "@/components/ArrivalDeparture/ArrivalDepartureTrain.vue";
+  import { processCallAtStop } from "@/utils/ArrivalDepartureUtils.js";
+  import { getStationDetails } from "@/utils/StationUtils.js";
 
-const apikeyStore = useApikeyStore();
-const stationStore = useStationStore();
-const resultCountStore = useResultCountStore();
-const dateStore = useDateStore();
+  const apikeyStore = useApikeyStore();
+  const stationStore = useStationStore();
+  const resultCountStore = useResultCountStore();
+  const dateStore = useDateStore();
 
-async function run() {
-  const didokResult = await getStationDetails(stationStore.station);
+  async function run() {
+    const didokResult = await getStationDetails(stationStore.station);
 
-  const currentDate = new Date();
+    const currentDate = new Date();
 
-  const body = `
+    const body = `
   <OJP xmlns="http://www.vdv.de/ojp" xmlns:siri="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vdv.de/ojp" version="2.0">
     <OJPRequest>
         <siri:ServiceRequest>
@@ -66,139 +66,141 @@ async function run() {
     </OJPRequest>
 </OJP>`;
 
-  const parsedResults = await fetch(
-    "https://api.opentransportdata.swiss/ojp20",
-    {
-      method: "POST",
-      body: body,
-      headers: {
-        "Content-Type": "application/xml",
-        authorization: "Bearer " + apikeyStore.apikey,
+    const parsedResults = await fetch(
+      "https://api.opentransportdata.swiss/ojp20",
+      {
+        method: "POST",
+        body: body,
+        headers: {
+          "Content-Type": "application/xml",
+          authorization: "Bearer " + apikeyStore.apikey,
+        },
       },
-    },
-  )
-    .then((res) => res.text())
-    .then((xml) => {
-      const parser = new XMLParser();
-      return parser.parse(xml);
-    })
-    .then((jsObject) => {
-      const stopEventResults =
-        jsObject["OJP"]["OJPResponse"]["siri:ServiceDelivery"][
-          "OJPStopEventDelivery"
-        ]["StopEventResult"];
-      //console.log(stopEventResults);
+    )
+      .then((res) => res.text())
+      .then((xml) => {
+        const parser = new XMLParser();
+        return parser.parse(xml);
+      })
+      .then((jsObject) => {
+        const stopEventResults =
+          jsObject["OJP"]["OJPResponse"]["siri:ServiceDelivery"][
+            "OJPStopEventDelivery"
+          ]["StopEventResult"];
+        //console.log(stopEventResults);
 
-      const resultList = [];
-      resultList.push({
-        serviceName: "Linie",
-        originDestination: "Nach",
-        plannedQuay: "Gleis/ Kante",
-        estimated: "Progn. Abfahrt",
-        timetabled: "Planm. Abfahrt",
-        calls: [],
+        const resultList = [];
+        resultList.push({
+          serviceName: "Linie",
+          originDestination: "Nach",
+          plannedQuay: "Gleis/ Kante",
+          estimated: "Progn. Abfahrt",
+          timetabled: "Planm. Abfahrt",
+          calls: [],
+        });
+
+        if (Object.hasOwn(stopEventResults, "StopEvent")) {
+          resultList.push(processStopEvent(stopEventResults["StopEvent"]));
+        } else {
+          for (const stopEventResult of stopEventResults) {
+            resultList.push(processStopEvent(stopEventResult));
+          }
+        }
+
+        return resultList;
       });
 
-      if (Object.hasOwn(stopEventResults, "StopEvent")) {
-        resultList.push(processStopEvent(stopEventResults["StopEvent"]));
+    //console.log(parsedResults);
+
+    const resultContainer = document.getElementById("resultContainer");
+
+    const nodes = [];
+    let currentId = 0;
+    for (const result of parsedResults) {
+      const tempResult = { train: result, id: currentId, arrival: false };
+      nodes.push(h(ArrivalDepartureTrain, tempResult));
+      currentId++;
+    }
+
+    const rootVNode = h("div", {}, nodes);
+    render(rootVNode, resultContainer);
+  }
+
+  function processStopEvent(stopEventPassed) {
+    let stopEvent;
+    if (Object.hasOwn(stopEventPassed, "StopEvent")) {
+      stopEvent = stopEventPassed["StopEvent"];
+    } else {
+      stopEvent = stopEventPassed;
+    }
+    const result = {};
+    result.originDestination = stopEvent["Service"]["DestinationText"]["Text"];
+    result.serviceName = stopEvent["Service"]["PublishedServiceName"]["Text"];
+    result.currentStation = stopEvent["ThisCall"]["CallAtStop"]["Order"];
+    const estimated =
+      stopEvent["ThisCall"]["CallAtStop"]["ServiceDeparture"]["EstimatedTime"];
+    result.timetabled = getTimeAsString(
+      new Date(
+        stopEvent["ThisCall"]["CallAtStop"]["ServiceDeparture"][
+          "TimetabledTime"
+        ],
+      ),
+      false,
+    );
+
+    if (estimated == null) {
+      result.estimated = result.timetabled;
+    } else {
+      result.estimated = getTimeAsString(new Date(estimated), true);
+    }
+
+    if (Object.hasOwn(stopEvent["ThisCall"]["CallAtStop"], "PlannedQuay")) {
+      result.plannedQuay = String(
+        stopEvent["ThisCall"]["CallAtStop"]["PlannedQuay"]["Text"],
+      );
+    } else {
+      result.plannedQuay = "";
+    }
+
+    if (Object.hasOwn(stopEvent["ThisCall"]["CallAtStop"], "EstimatedQuay")) {
+      result.plannedQuay =
+        String(result.plannedQuay) +
+        "$!" +
+        stopEvent["ThisCall"]["CallAtStop"]["EstimatedQuay"]["Text"];
+    }
+
+    //console.log(stopEvent);
+    const calls = [];
+    if (Object.hasOwn(stopEvent, "PreviousCall")) {
+      if (Object.hasOwn(stopEvent["PreviousCall"], "CallAtStop")) {
+        const callAtStop = stopEvent["PreviousCall"]["CallAtStop"];
+        calls.push(processCallAtStop(callAtStop));
       } else {
-        for (const stopEventResult of stopEventResults) {
-          resultList.push(processStopEvent(stopEventResult));
+        for (const iCall of stopEvent["PreviousCall"]) {
+          calls.push(processCallAtStop(iCall));
         }
       }
+    }
 
-      return resultList;
-    });
+    calls.push(processCallAtStop(stopEvent["ThisCall"]));
 
-  //console.log(parsedResults);
-
-  const resultContainer = document.getElementById("resultContainer");
-
-  const nodes = [];
-  let currentId = 0;
-  for (const result of parsedResults) {
-    const tempResult = { train: result, id: currentId, arrival: false };
-    nodes.push(h(ArrivalDepartureTrain, tempResult));
-    currentId++;
-  }
-
-  const rootVNode = h("div", {}, nodes);
-  render(rootVNode, resultContainer);
-}
-
-function processStopEvent(stopEventPassed) {
-  let stopEvent;
-  if (Object.hasOwn(stopEventPassed, "StopEvent")) {
-    stopEvent = stopEventPassed["StopEvent"];
-  } else {
-    stopEvent = stopEventPassed;
-  }
-  const result = {};
-  result.originDestination = stopEvent["Service"]["DestinationText"]["Text"];
-  result.serviceName = stopEvent["Service"]["PublishedServiceName"]["Text"];
-  result.currentStation = stopEvent["ThisCall"]["CallAtStop"]["Order"];
-  const estimated =
-    stopEvent["ThisCall"]["CallAtStop"]["ServiceDeparture"]["EstimatedTime"];
-  result.timetabled = getTimeAsString(
-    new Date(
-      stopEvent["ThisCall"]["CallAtStop"]["ServiceDeparture"]["TimetabledTime"],
-    ),
-    false,
-  );
-
-  if (estimated == null) {
-    result.estimated = result.timetabled;
-  } else {
-    result.estimated = getTimeAsString(new Date(estimated), true);
-  }
-
-  if (Object.hasOwn(stopEvent["ThisCall"]["CallAtStop"], "PlannedQuay")) {
-    result.plannedQuay = String(
-      stopEvent["ThisCall"]["CallAtStop"]["PlannedQuay"]["Text"],
-    );
-  } else {
-    result.plannedQuay = "";
-  }
-
-  if (Object.hasOwn(stopEvent["ThisCall"]["CallAtStop"], "EstimatedQuay")) {
-    result.plannedQuay =
-      String(result.plannedQuay) +
-      "$!" +
-      stopEvent["ThisCall"]["CallAtStop"]["EstimatedQuay"]["Text"];
-  }
-
-  //console.log(stopEvent);
-  const calls = [];
-  if (Object.hasOwn(stopEvent, "PreviousCall")) {
-    if (Object.hasOwn(stopEvent["PreviousCall"], "CallAtStop")) {
-      const callAtStop = stopEvent["PreviousCall"]["CallAtStop"];
-      calls.push(processCallAtStop(callAtStop));
-    } else {
-      for (const iCall of stopEvent["PreviousCall"]) {
-        calls.push(processCallAtStop(iCall));
+    if (Object.hasOwn(stopEvent, "OnwardCall")) {
+      if (Object.hasOwn(stopEvent["OnwardCall"], "CallAtStop")) {
+        const callAtStop = stopEvent["OnwardCall"]["CallAtStop"];
+        calls.push(processCallAtStop(callAtStop));
+      } else {
+        for (const iCall of stopEvent["OnwardCall"]) {
+          calls.push(processCallAtStop(iCall));
+        }
       }
     }
+
+    //console.log(calls);
+
+    result.calls = calls;
+
+    return result;
   }
-
-  calls.push(processCallAtStop(stopEvent["ThisCall"]));
-
-  if (Object.hasOwn(stopEvent, "OnwardCall")) {
-    if (Object.hasOwn(stopEvent["OnwardCall"], "CallAtStop")) {
-      const callAtStop = stopEvent["OnwardCall"]["CallAtStop"];
-      calls.push(processCallAtStop(callAtStop));
-    } else {
-      for (const iCall of stopEvent["OnwardCall"]) {
-        calls.push(processCallAtStop(iCall));
-      }
-    }
-  }
-
-  //console.log(calls);
-
-  result.calls = calls;
-
-  return result;
-}
 </script>
 
 <style scoped></style>

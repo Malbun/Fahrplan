@@ -29,65 +29,67 @@
 </template>
 
 <script setup>
-import { useStationStore } from "@/stores/StationStore.js";
-import { useDateStore } from "@/stores/DateStore.js";
-import { getDateAsString } from "@/utils/DateUtils.js";
-import { onMounted, onUpdated, ref } from "vue";
+  import { useStationStore } from "@/stores/StationStore.js";
+  import { useDateStore } from "@/stores/DateStore.js";
+  import { getDateAsString } from "@/utils/DateUtils.js";
+  import { onMounted, onUpdated, ref } from "vue";
 
-const props = defineProps({
-  id: { type: String, required: true },
-  name: { type: String, required: true },
-  timetabledArrival: { type: String, required: true },
-  estimatedArrival: { type: String, required: true },
-  timetabledDeparture: { type: String, required: true },
-  estimatedDeparture: { type: String, required: true },
-  quay: { type: String, required: true },
-  useClick: { type: Boolean, required: true },
-});
+  const props = defineProps({
+    id: { type: String, required: true },
+    name: { type: String, required: true },
+    timetabledArrival: { type: String, required: true },
+    estimatedArrival: { type: String, required: true },
+    timetabledDeparture: { type: String, required: true },
+    estimatedDeparture: { type: String, required: true },
+    quay: { type: String, required: true },
+    useClick: { type: Boolean, required: true },
+  });
 
-const stationStore = useStationStore();
-const dateStore = useDateStore();
+  const stationStore = useStationStore();
+  const dateStore = useDateStore();
 
-const quayFieldId = `QuayField-${props.id}`;
+  const quayFieldId = `QuayField-${props.id}`;
 
-const displayQuay = ref("");
+  const displayQuay = ref("");
 
-onUpdated(renderQuay);
+  onUpdated(renderQuay);
 
-onMounted(renderQuay);
+  onMounted(renderQuay);
 
-function renderQuay() {
-  if (props.quay.includes("$!")) {
-    if (!props.quay.includes("/")) {
-      displayQuay.value = props.quay.split("$!")[1];
-      document.getElementById(quayFieldId).style.color = "#ff1e1e";
+  function renderQuay() {
+    if (props.quay.includes("$!")) {
+      if (!props.quay.includes("/")) {
+        displayQuay.value = props.quay.split("$!")[1];
+        document.getElementById(quayFieldId).style.color = "#ff1e1e";
+      } else {
+        displayQuay.value = props.quay.split("$!")[1];
+      }
     } else {
-      displayQuay.value = props.quay.split("$!")[1];
+      displayQuay.value = props.quay;
     }
-  } else {
-    displayQuay.value = props.quay;
   }
-}
 
-function click() {
-  if (props.useClick) {
-    let now = new Date(dateStore.date);
-    let provDate = new Date(
-      getDateAsString(now) + "T" + props.estimatedArrival,
-    );
-    if (provDate.getTime() < now.getTime()) {
-      now.setDate(now.getDate() + 1);
-      provDate = new Date(getDateAsString(now) + "T" + props.estimatedArrival);
+  function click() {
+    if (props.useClick) {
+      let now = new Date(dateStore.date);
+      let provDate = new Date(
+        getDateAsString(now) + "T" + props.estimatedArrival,
+      );
+      if (provDate.getTime() < now.getTime()) {
+        now.setDate(now.getDate() + 1);
+        provDate = new Date(
+          getDateAsString(now) + "T" + props.estimatedArrival,
+        );
+      }
+
+      dateStore.date = getDateAsString(provDate) + "T" + props.estimatedArrival;
+
+      document.getElementById("input-arrdep").value = props.name;
+      stationStore.station = props.name;
+
+      document.getElementById("departureSearchButton").click();
     }
-
-    dateStore.date = getDateAsString(provDate) + "T" + props.estimatedArrival;
-
-    document.getElementById("input-arrdep").value = props.name;
-    stationStore.station = props.name;
-
-    document.getElementById("departureSearchButton").click();
   }
-}
 </script>
 
 <style scoped></style>

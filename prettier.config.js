@@ -5,4 +5,6 @@ export default {
   printWidth: 80,
   tabWidth: 2,
   endOfLine: "lf",
+  htmlWhitespaceSensitivity: "ignore",
+  vueIndentScriptAndStyle: true,
 };

@@ -29,77 +29,77 @@
 </template>
 
 <script setup>
-import TrackRunner from "@/components/TrackRunner/TrackRunner.vue";
-import { onMounted, onUpdated, ref } from "vue";
+  import TrackRunner from "@/components/TrackRunner/TrackRunner.vue";
+  import { onMounted, onUpdated, ref } from "vue";
 
-const props = defineProps({
-  train: { type: Object, required: true },
-  id: { type: Number, required: true },
-  arrival: { type: Boolean, required: true },
-});
+  const props = defineProps({
+    train: { type: Object, required: true },
+    id: { type: Number, required: true },
+    arrival: { type: Boolean, required: true },
+  });
 
-const trackRunnerID = `ArrDepTrain${props.id}`;
-const timetabledID = `ArrDepTrainTimetabled-${props.id}`;
-const estimatedID = `ArrDepTrainEstimated-${props.id}`;
-const serviceNameID = `ArrDepTrainServiceName-${props.id}`;
-const originDestinationID = `ArrDepTrainOriginDestination-${props.id}`;
-const quayID = `ArrDepTrainQuay-${props.id}`;
+  const trackRunnerID = `ArrDepTrain${props.id}`;
+  const timetabledID = `ArrDepTrainTimetabled-${props.id}`;
+  const estimatedID = `ArrDepTrainEstimated-${props.id}`;
+  const serviceNameID = `ArrDepTrainServiceName-${props.id}`;
+  const originDestinationID = `ArrDepTrainOriginDestination-${props.id}`;
+  const quayID = `ArrDepTrainQuay-${props.id}`;
 
-const quay = ref("");
+  const quay = ref("");
 
-//console.log(props.train);
+  //console.log(props.train);
 
-onUpdated(() => {
-  document.getElementById(trackRunnerID).style.display = "none";
-  renderQuay();
-});
+  onUpdated(() => {
+    document.getElementById(trackRunnerID).style.display = "none";
+    renderQuay();
+  });
 
-onMounted(() => {
-  renderQuay();
-  document.getElementById(trackRunnerID).style.display = "none";
-});
+  onMounted(() => {
+    renderQuay();
+    document.getElementById(trackRunnerID).style.display = "none";
+  });
 
-function renderQuay() {
-  if (String(props.train.plannedQuay).includes("$!")) {
-    const splitted = String(props.train.plannedQuay).split("$!");
-    quay.value = splitted[1];
-    if (!props.train.plannedQuay.includes("/")) {
-      document.getElementById(quayID).style.color = "#ff1e1e";
-    }
-  } else quay.value = props.train.plannedQuay;
-}
-
-function onClick() {
-  if (!Object.hasOwn(props.train, "calls")) return;
-
-  const trackRunnerContainer = document.getElementById(trackRunnerID);
-  if (trackRunnerContainer.style.display === "none") {
-    trackRunnerContainer.style.display = "block";
-  } else {
-    trackRunnerContainer.style.display = "none";
+  function renderQuay() {
+    if (String(props.train.plannedQuay).includes("$!")) {
+      const splitted = String(props.train.plannedQuay).split("$!");
+      quay.value = splitted[1];
+      if (!props.train.plannedQuay.includes("/")) {
+        document.getElementById(quayID).style.color = "#ff1e1e";
+      }
+    } else quay.value = props.train.plannedQuay;
   }
-}
+
+  function onClick() {
+    if (!Object.hasOwn(props.train, "calls")) return;
+
+    const trackRunnerContainer = document.getElementById(trackRunnerID);
+    if (trackRunnerContainer.style.display === "none") {
+      trackRunnerContainer.style.display = "block";
+    } else {
+      trackRunnerContainer.style.display = "none";
+    }
+  }
 </script>
 
 <style scoped>
-.timetabledTime {
-  width: 16vw;
-}
+  .timetabledTime {
+    width: 16vw;
+  }
 
-.estimatedTime {
-  width: 20vw;
-}
+  .estimatedTime {
+    width: 20vw;
+  }
 
-.serviceName {
-  width: 15vw;
-}
+  .serviceName {
+    width: 15vw;
+  }
 
-.originDestination {
-  width: 37vw;
-  display: block;
-}
+  .originDestination {
+    width: 37vw;
+    display: block;
+  }
 
-.quay {
-  width: 12vw;
-}
+  .quay {
+    width: 12vw;
+  }
 </style>

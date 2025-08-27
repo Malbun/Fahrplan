@@ -1,44 +1,44 @@
 <script setup>
-import { onMounted, onUpdated, ref } from "vue";
-import { BsPersonWalking } from "vue-icons-plus/bs";
+  import { onMounted, onUpdated, ref } from "vue";
+  import { BsPersonWalking } from "vue-icons-plus/bs";
 
-const props = defineProps({
-  leg: { type: Object, required: true },
-  id: { type: String, required: true },
-});
+  const props = defineProps({
+    leg: { type: Object, required: true },
+    id: { type: String, required: true },
+  });
 
-onMounted(renderInformation);
-onUpdated(renderInformation);
+  onMounted(renderInformation);
+  onUpdated(renderInformation);
 
-const displayIcon = ref(true);
-const displayMinutes = ref(true);
-const text = ref("");
+  const displayIcon = ref(true);
+  const displayMinutes = ref(true);
+  const text = ref("");
 
-function renderInformation() {
-  //console.log(props.leg);
+  function renderInformation() {
+    //console.log(props.leg);
 
-  if (props.leg.start !== props.leg.end) {
-    text.value = "Fussweg";
-    displayIcon.value = true;
-    displayMinutes.value = true;
-  } else {
-    text.value = "Umsteigen";
-    displayIcon.value = true;
-    displayMinutes.value = false;
+    if (props.leg.start !== props.leg.end) {
+      text.value = "Fussweg";
+      displayIcon.value = true;
+      displayMinutes.value = true;
+    } else {
+      text.value = "Umsteigen";
+      displayIcon.value = true;
+      displayMinutes.value = false;
+    }
+
+    if (props.leg.transferType === "remainInVehicle") {
+      text.value = "Im Fahrzeug bleiben";
+      displayIcon.value = false;
+      displayMinutes.value = false;
+    }
+
+    if (props.leg.transferType === "changeWithinVehicle") {
+      text.value = "Richtiger Zugteil";
+      displayIcon.value = false;
+      displayMinutes.value = false;
+    }
   }
-
-  if (props.leg.transferType === "remainInVehicle") {
-    text.value = "Im Fahrzeug bleiben";
-    displayIcon.value = false;
-    displayMinutes.value = false;
-  }
-
-  if (props.leg.transferType === "changeWithinVehicle") {
-    text.value = "Richtiger Zugteil";
-    displayIcon.value = false;
-    displayMinutes.value = false;
-  }
-}
 </script>
 
 <template>

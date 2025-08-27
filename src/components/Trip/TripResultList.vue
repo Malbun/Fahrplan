@@ -1,11 +1,11 @@
 <script setup>
-import TripResult from "@/components/Trip/TripResult.vue";
+  import TripResult from "@/components/Trip/TripResult.vue";
 
-const props = defineProps({
-  trips: { type: Array, required: true },
-});
+  const props = defineProps({
+    trips: { type: Array, required: true },
+  });
 
-console.log(props.trips);
+  console.log(props.trips);
 </script>
 
 <template>
