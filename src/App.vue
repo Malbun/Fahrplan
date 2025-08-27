@@ -1,17 +1,18 @@
 <script setup>
-import { useApikeyStore } from "@/stores/ApikeyStore.js";
-import { getDateAsString, getTimeAsString } from "@/utils/DateUtils.ts";
-import { useDateStore } from "@/stores/DateStore.js";
+  import { useApikeyStore } from "@/stores/ApikeyStore.js";
+  import { getDateAsString, getTimeAsString } from "@/utils/DateUtils.ts";
+  import { useDateStore } from "@/stores/DateStore.js";
+  import { BsGithub } from "vue-icons-plus/bs";
 
-const apikeyStore = useApikeyStore();
-const dateStore = useDateStore();
+  const apikeyStore = useApikeyStore();
+  const dateStore = useDateStore();
 
-// default dateTime
-const now = new Date();
-const localNow = new Date(now.getTime() + now.getTimezoneOffset());
-const timeString = getTimeAsString(localNow, false);
-const dateString = getDateAsString(localNow);
-dateStore.set(`${dateString}T${timeString}`);
+  // default dateTime
+  const now = new Date();
+  const localNow = new Date(now.getTime() + now.getTimezoneOffset());
+  const timeString = getTimeAsString(localNow, false);
+  const dateString = getDateAsString(localNow);
+  dateStore.set(`${dateString}T${timeString}`);
 </script>
 
 <template>
@@ -35,7 +36,7 @@ dateStore.set(`${dateString}T${timeString}`);
           Fahrplan
         </RouterLink>
         <div class="m-0.5">
-          <label for="datetime-input">Datum/Uhrzeit: </label>
+          <label for="datetime-input">Datum/Uhrzeit:</label>
           <input
             id="datetime-input"
             v-model="dateStore.date"
@@ -45,7 +46,7 @@ dateStore.set(`${dateString}T${timeString}`);
           />
         </div>
         <div class="m-0.5">
-          <label for="apiKey-input">API-Key: </label>
+          <label for="apiKey-input">API-Key:</label>
           <input
             id="apiKey-input"
             v-model="apikeyStore.apikey"
@@ -60,11 +61,22 @@ dateStore.set(`${dateString}T${timeString}`);
     <div class="text-white m-4">
       This Website uses
       <a
-        class="underline"
+        class="underline cursor-pointer"
         href="https://data.opentransportdata.swiss/de/dataset/ojp2-0"
-        >OJP 2.0</a
-      >. OJP uses
-      <a class="underline" href="https://www.osm.org">OpenStreetMap</a>
+      >
+        OJP 2.0
+      </a>
+      . OJP uses
+      <a class="underline cursor-pointer" href="https://www.osm.org">
+        OpenStreetMap
+      </a>
+      <br />
+      <div class="flex flex-row space-x-2">
+        <div>GitHub:</div>
+        <a class="cursor-pointer" href="https://github.com/Malbun/Fahrplan">
+          <BsGithub />
+        </a>
+      </div>
     </div>
   </div>
 </template>

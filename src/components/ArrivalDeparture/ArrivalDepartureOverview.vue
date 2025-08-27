@@ -1,11 +1,11 @@
 <script setup>
-import { useStationStore } from "@/stores/StationStore.js";
-import { useResultCountStore } from "@/stores/ResultCountStore.js";
-import Station from "@/components/Station.vue";
+  import { useStationStore } from "@/stores/StationStore.js";
+  import { useResultCountStore } from "@/stores/ResultCountStore.js";
+  import Station from "@/components/Station.vue";
 
-const stationStore = useStationStore();
-const resultCountStore = useResultCountStore();
-resultCountStore.set(15);
+  const stationStore = useStationStore();
+  const resultCountStore = useResultCountStore();
+  resultCountStore.set(15);
 </script>
 
 <template>
@@ -36,7 +36,7 @@ resultCountStore.set(15);
         class="m-0.5"
       />
       <div class="m-0.5">
-        <label for="resultCountArrDep">Ergebnisse: </label>
+        <label for="resultCountArrDep">Ergebnisse:</label>
         <input
           id="resultCountArrDep"
           v-model="resultCountStore.resultCount"
@@ -47,7 +47,7 @@ resultCountStore.set(15);
       </div>
     </div>
     <div class="text-gray-100 mt-2">
-      <RouterView id="router-view"> </RouterView>
+      <RouterView id="router-view"></RouterView>
     </div>
   </div>
 </template>
