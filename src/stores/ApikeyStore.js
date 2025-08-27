@@ -1,13 +1,13 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-export const useApikeyStore = defineStore('apikey', {
+export const useApikeyStore = defineStore("apikey", {
   state: () => {
-    return {apikey: ''}
+    return { apikey: "" };
   },
   actions: {
-    set(val = '') {
+    set(val = "") {
       this.apikey = val;
-    }
+    },
   },
   getters: {
     get: (state) => state.apikey,

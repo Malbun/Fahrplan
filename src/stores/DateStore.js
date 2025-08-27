@@ -1,13 +1,13 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-export const useDateStore = defineStore('date', {
+export const useDateStore = defineStore("date", {
   state: () => {
-    return {date: ''}
+    return { date: "" };
   },
   actions: {
-    set(val = '') {
+    set(val = "") {
       this.date = val;
-    }
+    },
   },
   getters: {
     get: (state) => state.date,
