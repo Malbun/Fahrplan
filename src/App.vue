@@ -19,10 +19,10 @@ dateStore.set(`${dateString}T${timeString}`);
   <div>
     <div>
       <div class="flex flex-wrap items-center flex-row justify-between bg-blue-400  rounded-2xl p-3 m-3">
-        <RouterLink to="/arrdep/" class="p-2 rounded-2xl hover:text-gray-100 hover:bg-gray-800 transition-all duration-300 m-0.5" active-class="bg-white">
+        <RouterLink to="/arrdep/" class="p-2 font-bold rounded-2xl hover:text-gray-100 hover:bg-gray-800 transition-all duration-300 m-0.5" active-class="bg-white">
           Ankunft- und Abfahrtsanzeiger
         </RouterLink>
-        <RouterLink to="/trip/" class="p-2 rounded-2xl hover:text-gray-100 hover:bg-gray-800 transition-all duration-300 m-0.5" active-class="bg-white">
+        <RouterLink to="/trip/" class="p-2 font-bold rounded-2xl hover:text-gray-100 hover:bg-gray-800 transition-all duration-300 m-0.5" active-class="bg-white">
           Fahrplan
         </RouterLink>
         <div class="m-0.5">
