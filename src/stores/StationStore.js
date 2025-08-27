@@ -1,15 +1,15 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useStationStore = defineStore('station', {
+export const useStationStore = defineStore("station", {
   state: () => {
-    return {station: ''}
+    return { station: "" };
   },
   actions: {
-    set(val = '') {
+    set(val = "") {
       this.station = val;
-    }
+    },
   },
   getters: {
     get: (state) => state.station,
   },
-})
+});

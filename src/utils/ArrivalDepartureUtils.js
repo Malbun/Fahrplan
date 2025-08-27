@@ -13,22 +13,25 @@ export const processCallAtStop = (callAtStopPassed) => {
   singleCall.name = callAtStop["StopPointName"]["Text"];
 
   if (Object.hasOwn(callAtStop, "ServiceDeparture")) {
-    singleCall.timetabledDeparture = callAtStop["ServiceDeparture"]["TimetabledTime"];
+    singleCall.timetabledDeparture =
+      callAtStop["ServiceDeparture"]["TimetabledTime"];
 
     if (Object.hasOwn(callAtStop["ServiceDeparture"], "EstimatedTime")) {
-      singleCall.estimatedDeparture = callAtStop["ServiceDeparture"]["EstimatedTime"];
+      singleCall.estimatedDeparture =
+        callAtStop["ServiceDeparture"]["EstimatedTime"];
     } else singleCall.estimatedDeparture = singleCall.timetabledDeparture;
-
   } else {
     singleCall.estimatedDeparture = "";
     singleCall.timetabledDeparture = "";
   }
 
   if (Object.hasOwn(callAtStop, "ServiceArrival")) {
-    singleCall.timetabledArrival = callAtStop["ServiceArrival"]["TimetabledTime"];
+    singleCall.timetabledArrival =
+      callAtStop["ServiceArrival"]["TimetabledTime"];
 
     if (Object.hasOwn(callAtStop["ServiceArrival"], "EstimatedTime")) {
-      singleCall.estimatedArrival = callAtStop["ServiceArrival"]["EstimatedTime"];
+      singleCall.estimatedArrival =
+        callAtStop["ServiceArrival"]["EstimatedTime"];
     } else singleCall.estimatedArrival = singleCall.timetabledArrival;
   } else {
     singleCall.estimatedArrival = "";
@@ -42,9 +45,11 @@ export const processCallAtStop = (callAtStopPassed) => {
   }
 
   if (Object.hasOwn(callAtStop, "EstimatedQuay")) {
-    singleCall.plannedQuay = String(singleCall.plannedQuay) + "$!" + callAtStop["EstimatedQuay"]["Text"];
+    singleCall.plannedQuay =
+      String(singleCall.plannedQuay) +
+      "$!" +
+      callAtStop["EstimatedQuay"]["Text"];
   }
 
   return singleCall;
-
-}
+};

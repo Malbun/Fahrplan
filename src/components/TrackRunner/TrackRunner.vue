@@ -1,26 +1,25 @@
 <template>
-  <div :id="mainContainerId">
-  </div>
+  <div :id="mainContainerId"></div>
 </template>
 
 <script setup>
-import {h, onMounted, onUpdated, render} from "vue";
+import { h, onMounted, onUpdated, render } from "vue";
 import TrackRunnerCall from "@/components/TrackRunner/TrackRunnerCall.vue";
-import {getTimeAsString} from "@/utils/DateUtils.js";
+import { getTimeAsString } from "@/utils/DateUtils.js";
 
 const props = defineProps({
-  calls: Object,
-  id: String,
-  arrival: Boolean,
-  currentStation: Number,
-})
+  calls: { type: Object, required: true },
+  id: { type: String, required: true },
+  arrival: { type: Boolean, required: true },
+  currentStation: { type: Number, required: true },
+});
 
-const mainContainerId = `TrackRunnerMainContainer-${props.id}`
+const mainContainerId = `TrackRunnerMainContainer-${props.id}`;
 let runnerCounter = -1;
 
 onMounted(showView);
 
-onUpdated(showView)
+onUpdated(showView);
 
 function showView() {
   runnerCounter++;
@@ -34,30 +33,52 @@ function showView() {
         const currentProps = {
           id: `TrackRunner-${props.id}:Call-${runnerCounter}`,
           name: station.name,
-          timetabledArrival: getTimeAsString(new Date(station.timetabledArrival), true),
-          estimatedArrival: getTimeAsString(new Date(station.estimatedArrival), true),
-          timetabledDeparture: getTimeAsString(new Date(station.timetabledDeparture), true),
-          estimatedDeparture: getTimeAsString(new Date(station.estimatedDeparture), true),
+          timetabledArrival: getTimeAsString(
+            new Date(station.timetabledArrival),
+            true,
+          ),
+          estimatedArrival: getTimeAsString(
+            new Date(station.estimatedArrival),
+            true,
+          ),
+          timetabledDeparture: getTimeAsString(
+            new Date(station.timetabledDeparture),
+            true,
+          ),
+          estimatedDeparture: getTimeAsString(
+            new Date(station.estimatedDeparture),
+            true,
+          ),
           quay: String(station.plannedQuay),
           useClick: false,
-        }
+        };
         nodes.push(h(TrackRunnerCall, currentProps, null));
-
       }
     } else {
       //console.log(station);
       if (props.currentStation < station.order) {
         const currentProps = {
           name: station.name,
-          timetabledArrival: getTimeAsString(new Date(station.timetabledArrival), true),
-          estimatedArrival: getTimeAsString(new Date(station.estimatedArrival), true),
-          timetabledDeparture: getTimeAsString(new Date(station.timetabledDeparture), true),
-          estimatedDeparture: getTimeAsString(new Date(station.estimatedDeparture), true),
+          timetabledArrival: getTimeAsString(
+            new Date(station.timetabledArrival),
+            true,
+          ),
+          estimatedArrival: getTimeAsString(
+            new Date(station.estimatedArrival),
+            true,
+          ),
+          timetabledDeparture: getTimeAsString(
+            new Date(station.timetabledDeparture),
+            true,
+          ),
+          estimatedDeparture: getTimeAsString(
+            new Date(station.estimatedDeparture),
+            true,
+          ),
           quay: String(station.plannedQuay),
           useClick: true,
-        }
+        };
         nodes.push(h(TrackRunnerCall, currentProps, null));
-
       }
     }
   }
@@ -68,9 +89,6 @@ function showView() {
     render(rootVNode, mainContainer);
   }
 }
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,13 +1,13 @@
 <script setup>
 // imports
-import {getTimeAsString} from "@/utils/DateUtils.js";
-import {onMounted, onUpdated, ref} from "vue";
-import {BsPersonWalking} from "vue-icons-plus/bs";
+import { getTimeAsString } from "@/utils/DateUtils.js";
+import { onMounted, onUpdated, ref } from "vue";
+import { BsPersonWalking } from "vue-icons-plus/bs";
 import LegList from "@/components/Trip/LegView/LegList.vue";
 
 // props
 const props = defineProps({
-  trip: Object
+  trip: { type: Object, required: true },
 });
 
 // uniq IDs for all containers
@@ -41,26 +41,33 @@ function renderInformation() {
   const hours = Math.floor(rawDuration / 60); // calculate the whole hours from the raw duration
   const minutes = rawDuration % 60; // calculate the remaining minutes from the raw duration
 
-  if (hours === 0) { // checks if hours is 0
+  if (hours === 0) {
+    // checks if hours is 0
     duration.value = `${minutes}min`; // only adds minutes to string
-  } else { // has 1 or more hours
+  } else {
+    // has 1 or more hours
     duration.value = `${hours}h ${minutes}min`; // adds hours and minutes to string
   }
 
-  if (props.trip.legs[0].type === "timed") { // checks if the first leg is a timed leg
+  if (props.trip.legs[0].type === "timed") {
+    // checks if the first leg is a timed leg
     renderFirstTimedLeg(0); // renders the first leg with the index for the first timed leg
     document.getElementById(walkPrefixId).style.display = "none"; // hide the icon and time for walking before the first leg
-  } else { // the first leg is a transfer leg
+  } else {
+    // the first leg is a transfer leg
     renderFirstTimedLeg(1); // renders the first leg with the index for the first timed leg
     walkPrefix.value = "'" + props.trip.legs[0].duration; // set the minutes to walk before the first timed leg to the duration of the first transfer leg
     document.getElementById(walkPrefixId).style.display = "flex"; // display the prefix icon and time
   }
 
-  if (props.trip.legs[props.trip.legs.length - 1].type === "transfer") { // checks if the last leg is a transfer leg
+  if (props.trip.legs[props.trip.legs.length - 1].type === "transfer") {
+    // checks if the last leg is a transfer leg
     endTime.value = props.trip.legs[props.trip.legs.length - 2].endTime; // sets the end time to the end time of the last timed leg
-    walkAfter.value = "'" + props.trip.legs[props.trip.legs.length - 1].duration; // set the time to walk after the last timed leg to the duration of the last transfer leg
+    walkAfter.value =
+      "'" + props.trip.legs[props.trip.legs.length - 1].duration; // set the time to walk after the last timed leg to the duration of the last transfer leg
     document.getElementById(walkAfterId).style.display = "flex"; // display the walk icon and the time after the last timed leg
-  } else { // last leg is a timed leg
+  } else {
+    // last leg is a timed leg
     document.getElementById(walkAfterId).style.display = "none"; // hide the walk icon and the time after the last timed leg
     endTime.value = props.trip.legs[props.trip.legs.length - 1].endTime; // set the end time to the end time of the last timed leg
   }
@@ -71,7 +78,8 @@ function renderFirstTimedLeg(index) {
   startTime.value = props.trip.legs[index].startTime; // set the start time to the start time of the first timed leg
 
   let prefix = ""; // init variable for the prefix for the line name
-  if (props.trip.legs[index].ptMode !== "rail") { // checks if the leg mod (transport vehicle type) isn't a train
+  if (props.trip.legs[index].ptMode !== "rail") {
+    // checks if the leg mod (transport vehicle type) isn't a train
     prefix = `${props.trip.legs[index].modeShort} `; // add the prefix from the mode short value to the prefix variable
   }
   serviceName.value = `${prefix}${props.trip.legs[index].serviceName}`; // set the service name to the prefix and the service name given by the trip
@@ -81,71 +89,76 @@ function renderFirstTimedLeg(index) {
   const firstCall = props.trip.legs[index].calls[0]; // get the first stop call from this leg
   let tempQuay = ""; // init variable to temporally store and edit the quay
 
-  if (firstCall.order === 1) { // check if the first call is also the first in the order
+  if (firstCall.order === 1) {
+    // check if the first call is also the first in the order
     tempQuay = String(firstCall.quay); // load tempQuay with the provided quay
   }
 
-  if (tempQuay.includes("$!")) { // checks if an estimated quay exists
-    if (!tempQuay.includes("/")) { // checks if the estimated quay has to be displayed as a quay change (ref. ZMUS)
+  if (tempQuay.includes("$!")) {
+    // checks if an estimated quay exists
+    if (!tempQuay.includes("/")) {
+      // checks if the estimated quay has to be displayed as a quay change (ref. ZMUS)
       document.getElementById(quayId).style.color = "#ff1e1e"; // set the color of the quay text to red
       document.getElementById(quayId).style.fontWeight = "bold"; // set the font of the quay text to bold
     }
     tempQuay = tempQuay.split("$!")[1]; // set the temp variable to the estimated quay
   }
 
-  if (tempQuay !== "" && /\d/.test(tempQuay)) { // checks if the temp variable isn't empty and contains a digit
+  if (tempQuay !== "" && /\d/.test(tempQuay)) {
+    // checks if the temp variable isn't empty and contains a digit
     quay.value = `Gleis: ${tempQuay}`; // set quay text to Gleis: tempQuay
-  } else if (tempQuay !== "" && !(/\d/.test(tempQuay))) { // checks if the temp variable isn't empty and does not contain any digits
+  } else if (tempQuay !== "" && !/\d/.test(tempQuay)) {
+    // checks if the temp variable isn't empty and does not contain any digits
     quay.value = `Kante: ${tempQuay}`; // set quay text to Kante: tempQuay
-  } else { // tempQuay is empty
+  } else {
+    // tempQuay is empty
     quay.value = tempQuay; // set quay text to empty string
   }
-
 }
 
 // executed if the trip result item is clicked
 // hides and restores the leg list
 function clicked() {
-  if (document.getElementById(legListId).style.display === "none") { // check if the leg list container is hided
+  if (document.getElementById(legListId).style.display === "none") {
+    // check if the leg list container is hided
     document.getElementById(legListId).style.display = "inline-block"; // restore it
-  } else { // is restored
-    document.getElementById(legListId).style.display = "none";  // hide it
+  } else {
+    // is restored
+    document.getElementById(legListId).style.display = "none"; // hide it
   }
 }
 </script>
 
 <template>
-<div @click="clicked()" class="flex flex-col space-y-0.5">
-  <div class="flex flex-row space-x-2">
-    <div>{{serviceName}}</div>
-    <div>{{trainDestination}}</div>
-  </div>
-  <div class="flex flex-row justify-between">
-    <div class="flex flex-row">
-      <div class="flex flex-row mr-2" :id="walkPrefixId">
-        <BsPersonWalking />
-        <div>{{walkPrefix}}</div>
-      </div>
-      <div>{{getTimeAsString(new Date(startTime))}}</div>
+  <div class="flex flex-col space-y-0.5" @click="clicked()">
+    <div class="flex flex-row space-x-2">
+      <div>{{ serviceName }}</div>
+      <div>{{ trainDestination }}</div>
     </div>
-    <div>{{duration}}</div>
-    <div class="flex flex-row">
-      <div>{{getTimeAsString(new Date(endTime))}}</div>
-      <div class="flex flex-row ml-1" :id="walkAfterId">
-        <BsPersonWalking />
-        <div>{{walkAfter}}</div>
+    <div class="flex flex-row justify-between">
+      <div class="flex flex-row">
+        <div :id="walkPrefixId" class="flex flex-row mr-2">
+          <BsPersonWalking />
+          <div>{{ walkPrefix }}</div>
+        </div>
+        <div>{{ getTimeAsString(new Date(startTime)) }}</div>
+      </div>
+      <div>{{ duration }}</div>
+      <div class="flex flex-row">
+        <div>{{ getTimeAsString(new Date(endTime)) }}</div>
+        <div :id="walkAfterId" class="flex flex-row ml-1">
+          <BsPersonWalking />
+          <div>{{ walkAfter }}</div>
+        </div>
       </div>
     </div>
+    <div class="flex flex-row justify-between">
+      <div :id="quayId">{{ quay }}</div>
+    </div>
+    <div :id="legListId" style="display: none">
+      <LegList :trip="props.trip" />
+    </div>
   </div>
-  <div class="flex flex-row justify-between">
-    <div :id="quayId">{{quay}}</div>
-  </div>
-  <div :id="legListId" style="display: none">
-    <LegList :trip="props.trip" />
-  </div>
-</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

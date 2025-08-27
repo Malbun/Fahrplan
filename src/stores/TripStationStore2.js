@@ -1,15 +1,15 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useTripStation2Store = defineStore('tripStation2', {
+export const useTripStation2Store = defineStore("tripStation2", {
   state: () => {
-    return {tripStation2: ''}
+    return { tripStation2: "" };
   },
   actions: {
-    set(val = '') {
+    set(val = "") {
       this.tripStation2 = val;
-    }
+    },
   },
   getters: {
     get: (state) => state.tripStation2,
   },
-})
+});

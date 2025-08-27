@@ -1,10 +1,10 @@
 <script setup>
-import {onMounted, onUpdated, ref} from "vue";
-import {BsPersonWalking} from "vue-icons-plus/bs";
+import { onMounted, onUpdated, ref } from "vue";
+import { BsPersonWalking } from "vue-icons-plus/bs";
 
 const props = defineProps({
-  leg: Object,
-  id: String,
+  leg: { type: Object, required: true },
+  id: { type: String, required: true },
 });
 
 onMounted(renderInformation);
@@ -28,7 +28,7 @@ function renderInformation() {
   }
 
   if (props.leg.transferType === "remainInVehicle") {
-    text.value = "Im Fahrzeug bleiben"
+    text.value = "Im Fahrzeug bleiben";
     displayIcon.value = false;
     displayMinutes.value = false;
   }
@@ -39,21 +39,18 @@ function renderInformation() {
     displayMinutes.value = false;
   }
 }
-
 </script>
 
 <template>
-<div class="bg-gray-600 p-1.5 rounded-xl mt-1.5 mb-1.5">
-  <div class="flex flex-row space-x-3">
-    <div class="flex flex-row">
-      <BsPersonWalking v-if="displayIcon"/>
-      <div v-if="displayMinutes">{{`${props.leg.duration}'`}}</div>
+  <div class="bg-gray-600 p-1.5 rounded-xl mt-1.5 mb-1.5">
+    <div class="flex flex-row space-x-3">
+      <div class="flex flex-row">
+        <BsPersonWalking v-if="displayIcon" />
+        <div v-if="displayMinutes">{{ `${props.leg.duration}'` }}</div>
+      </div>
+      <div>{{ text }}</div>
     </div>
-    <div>{{text}}</div>
   </div>
-</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

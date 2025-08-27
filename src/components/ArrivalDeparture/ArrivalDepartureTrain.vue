@@ -1,15 +1,28 @@
 <template>
   <div class="bg-gray-600 rounded-xl">
-    <div @click="onClick()" class="flex items-center flex-row justify-between mt-3 p-1">
-      <div class="timetabledTime" :id="timetabledID">{{ train.timetabled }}</div>
-      <div class="estimatedTime" :id="estimatedID">{{ train.estimated }}</div>
-      <div class="serviceName" :id="serviceNameID">{{ train.serviceName }}</div>
-      <div class="originDestination" :id="originDestinationID">{{ train.originDestination }}</div>
-      <div class="quay" :id="quayID">{{ quay }}</div>
+    <div
+      class="flex items-center flex-row justify-between mt-3 p-1"
+      @click="onClick()"
+    >
+      <div :id="timetabledID" class="timetabledTime">
+        {{ train.timetabled }}
+      </div>
+      <div :id="estimatedID" class="estimatedTime">{{ train.estimated }}</div>
+      <div :id="serviceNameID" class="serviceName">{{ train.serviceName }}</div>
+      <div :id="originDestinationID" class="originDestination">
+        {{ train.originDestination }}
+      </div>
+      <div :id="quayID" class="quay">{{ quay }}</div>
     </div>
     <div :id="trackRunnerID" class="p-2">
       <div class="justify-items-center">
-        <TrackRunner :id="props.id" :calls="props.train.calls" :current-station="props.train.currentStation" :arrival= "props.arrival" class="p-1 bg-gray-500 rounded-xl"/>
+        <TrackRunner
+          :id="props.id"
+          :calls="props.train.calls"
+          :current-station="props.train.currentStation"
+          :arrival="props.arrival"
+          class="p-1 bg-gray-500 rounded-xl"
+        />
       </div>
     </div>
   </div>
@@ -17,16 +30,15 @@
 
 <script setup>
 import TrackRunner from "@/components/TrackRunner/TrackRunner.vue";
-import {onMounted, onUpdated, ref} from "vue";
+import { onMounted, onUpdated, ref } from "vue";
 
 const props = defineProps({
-  train: Object,
-  id: Number,
-  arrival: Boolean,
-})
+  train: { type: Object, required: true },
+  id: { type: Number, required: true },
+  arrival: { type: Boolean, required: true },
+});
 
 const trackRunnerID = `ArrDepTrain${props.id}`;
-const trackRunnerContainerID = `ArrDepTrainTrackRunnerContainer-${props.id}`;
 const timetabledID = `ArrDepTrainTimetabled-${props.id}`;
 const estimatedID = `ArrDepTrainEstimated-${props.id}`;
 const serviceNameID = `ArrDepTrainServiceName-${props.id}`;
@@ -48,10 +60,10 @@ onMounted(() => {
 });
 
 function renderQuay() {
-  if (String(props.train.plannedQuay).includes('$!')) {
-    const splitted = String(props.train.plannedQuay).split('$!');
+  if (String(props.train.plannedQuay).includes("$!")) {
+    const splitted = String(props.train.plannedQuay).split("$!");
     quay.value = splitted[1];
-    if (!(props.train.plannedQuay).includes('/')) {
+    if (!props.train.plannedQuay.includes("/")) {
       document.getElementById(quayID).style.color = "#ff1e1e";
     }
   } else quay.value = props.train.plannedQuay;
@@ -67,11 +79,9 @@ function onClick() {
     trackRunnerContainer.style.display = "none";
   }
 }
-
 </script>
 
 <style scoped>
-
 .timetabledTime {
   width: 16vw;
 }

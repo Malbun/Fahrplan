@@ -1,13 +1,13 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-export const useResultCountStore = defineStore('resultCount', {
+export const useResultCountStore = defineStore("resultCount", {
   state: () => {
-    return {resultCount: 0}
+    return { resultCount: 0 };
   },
   actions: {
     set(val = 0) {
       this.resultCount = val;
-    }
+    },
   },
   getters: {
     get: (state) => state.resultCount,
