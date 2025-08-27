@@ -258,19 +258,19 @@
         // check if the stop has an EstimatedQuay field
         if (!(stop["PlannedQuay"]["Text"] === stop["EstimatedQuay"]["Text"])) {
           // checks if the planned quay is not equal to the estimated quay
-          call.quay = `${stop["PlannedQuay"]["Text"]}$!${stop["EstimatedQuay"]["Text"]}`; // set quay to '(plannedQuay)$!(estimatedQuay)'
+          call.plannedQuay = `${stop["PlannedQuay"]["Text"]}$!${stop["EstimatedQuay"]["Text"]}`; // set quay to '(plannedQuay)$!(estimatedQuay)'
         } else {
           // has estimated quay and timetabled quay, but they are the same
-          call.quay = String(stop["EstimatedQuay"]["Text"]); // set quay to estimated quay
+          call.plannedQuay = String(stop["EstimatedQuay"]["Text"]); // set quay to estimated quay
         }
       } else {
         // has no estimated quay
         if (Object.hasOwn(stop, "PlannedQuay")) {
           // checks if the stop has a planned quay field
-          call.quay = String(stop["PlannedQuay"]["Text"]); // set quay to the planned quay
+          call.plannedQuay = String(stop["PlannedQuay"]["Text"]); // set quay to the planned quay
         } else {
           // has no planned quay
-          call.quay = ""; // set quay to an empty string
+          call.plannedQuay = ""; // set quay to an empty string
         }
       }
 

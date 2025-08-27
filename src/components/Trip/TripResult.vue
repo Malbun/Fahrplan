@@ -91,7 +91,7 @@
 
     if (firstCall.order === 1) {
       // check if the first call is also the first in the order
-      tempQuay = String(firstCall.quay); // load tempQuay with the provided quay
+      tempQuay = String(firstCall.plannedQuay); // load tempQuay with the provided quay
     }
 
     if (tempQuay.includes("$!")) {
@@ -130,30 +130,32 @@
 </script>
 
 <template>
-  <div class="flex flex-col space-y-0.5" @click="clicked()">
-    <div class="flex flex-row space-x-2">
-      <div>{{ serviceName }}</div>
-      <div>{{ trainDestination }}</div>
-    </div>
-    <div class="flex flex-row justify-between">
-      <div class="flex flex-row">
-        <div :id="walkPrefixId" class="flex flex-row mr-2">
-          <BsPersonWalking />
-          <div>{{ walkPrefix }}</div>
-        </div>
-        <div>{{ getTimeAsString(new Date(startTime)) }}</div>
+  <div class="flex flex-col space-y-0.5">
+    <div @click="clicked()">
+      <div class="flex flex-row space-x-2">
+        <div>{{ serviceName }}</div>
+        <div>{{ trainDestination }}</div>
       </div>
-      <div>{{ duration }}</div>
-      <div class="flex flex-row">
-        <div>{{ getTimeAsString(new Date(endTime)) }}</div>
-        <div :id="walkAfterId" class="flex flex-row ml-1">
-          <BsPersonWalking />
-          <div>{{ walkAfter }}</div>
+      <div class="flex flex-row justify-between">
+        <div class="flex flex-row">
+          <div :id="walkPrefixId" class="flex flex-row mr-2">
+            <BsPersonWalking />
+            <div>{{ walkPrefix }}</div>
+          </div>
+          <div>{{ getTimeAsString(new Date(startTime)) }}</div>
+        </div>
+        <div>{{ duration }}</div>
+        <div class="flex flex-row" style="width: 90px">
+          <div>{{ getTimeAsString(new Date(endTime)) }}</div>
+          <div :id="walkAfterId" class="flex flex-row ml-1">
+            <BsPersonWalking />
+            <div>{{ walkAfter }}</div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="flex flex-row justify-between">
-      <div :id="quayId">{{ quay }}</div>
+      <div class="flex flex-row justify-between">
+        <div :id="quayId">{{ quay }}</div>
+      </div>
     </div>
     <div :id="legListId" style="display: none">
       <LegList :trip="props.trip" />

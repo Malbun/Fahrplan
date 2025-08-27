@@ -16,7 +16,7 @@
 </script>
 
 <template>
-  <div>
+  <div class="cursor-default">
     <div>
       <div
         class="flex flex-wrap items-center flex-row justify-between bg-blue-400 rounded-2xl p-3 m-3"

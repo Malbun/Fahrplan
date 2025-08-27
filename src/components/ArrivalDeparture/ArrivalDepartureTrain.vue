@@ -21,6 +21,7 @@
           :calls="props.train.calls"
           :current-station="props.train.currentStation"
           :arrival="props.arrival"
+          :use-click="true"
           class="p-1 bg-gray-500 rounded-xl"
         />
       </div>
