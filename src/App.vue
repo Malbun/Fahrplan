@@ -58,7 +58,7 @@
       </div>
       <RouterView />
     </div>
-    <div class="text-white m-4">
+    <div class="text-white m-4 space-x-1">
       This Website uses
       <a
         class="underline cursor-pointer"
@@ -66,7 +66,7 @@
       >
         OJP 2.0
       </a>
-      . OJP uses
+      OJP uses
       <a class="underline cursor-pointer" href="https://www.osm.org">
         OpenStreetMap
       </a>
@@ -75,6 +75,14 @@
         <div>GitHub:</div>
         <a class="cursor-pointer" href="https://github.com/Malbun/Fahrplan">
           <BsGithub />
+        </a>
+      </div>
+      <div>
+        <a
+          href="https://github.com/Malbun/Fahrplan/issues"
+          class="underline cursor-pointer"
+        >
+          Report Issue
         </a>
       </div>
     </div>
