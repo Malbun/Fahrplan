@@ -8,10 +8,11 @@
   import { getTimeAsString } from "@/utils/DateUtils.js";
 
   const props = defineProps({
-    calls: { type: Object, required: true },
+    calls: { type: Array, required: true },
     id: { type: String, required: true },
     arrival: { type: Boolean, required: true },
     currentStation: { type: Number, required: true },
+    useClick: { type: Boolean, required: true },
   });
 
   const mainContainerId = `TrackRunnerMainContainer-${props.id}`;
@@ -76,7 +77,7 @@
               true,
             ),
             quay: String(station.plannedQuay),
-            useClick: true,
+            useClick: props.useClick,
           };
           nodes.push(h(TrackRunnerCall, currentProps, null));
         }
