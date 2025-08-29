@@ -77,6 +77,13 @@
       <RouterView />
     </div>
     <div class="text-white m-4 space-x-1">
+      <a
+        class="underline"
+        href="https://github.com/Malbun/Fahrplan/blob/master/README.md"
+      >
+        Get started
+      </a>
+      <br />
       This Website uses
       <a
         class="underline cursor-pointer"
