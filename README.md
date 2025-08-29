@@ -1,10 +1,12 @@
 # Fahrplan
 
 ## Getting started
+
 Note: The whole application is only in german!
 
 This application uses the OJP 2.0 API from [opentransportdata.swiss](https://opentransportdata.swiss).  
 You need an API-Key for the OJP API.
+
 1. Go to [opentransportdata.swiss API-Manager](https://api-manager.opentransportdata.swiss/)
 2. Log-in with an existing account or register a new one
 3. Scroll down and click on "Read more" at the OJP 2.0 box
@@ -15,7 +17,7 @@ You need an API-Key for the OJP API.
 8. Get your API-Key at the token field
 9. Use the API-Key on [malbun.github.io/Fahrplan](https://malbun.github.io/Fahrplan)
 
-You can save the API-Key as password and your browser should automatically fill out the API-Key field.  
+You can save the API-Key as password and your browser should automatically fill out the API-Key field.
 
 Have fun
 
