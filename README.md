@@ -1,5 +1,12 @@
 # Fahrplan
 
+This is a web based application for the swiss public transport network.  
+Functions:
+
+- Arrival Display
+- Departure Display
+- Basic routing service
+
 ## Getting started
 
 Note: The whole application is only in german!
