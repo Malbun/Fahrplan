@@ -3,6 +3,7 @@
   import { getDateAsString, getTimeAsString } from "@/utils/DateUtils.ts";
   import { useDateStore } from "@/stores/DateStore.js";
   import { BsGithub } from "vue-icons-plus/bs";
+  import { onMounted } from "vue";
 
   const apikeyStore = useApikeyStore();
   const dateStore = useDateStore();
@@ -13,6 +14,22 @@
   const timeString = getTimeAsString(localNow, false);
   const dateString = getDateAsString(localNow);
   dateStore.set(`${dateString}T${timeString}`);
+
+  onMounted(() => {
+    if (
+      !(
+        sessionStorage.api === null ||
+        sessionStorage.api === undefined ||
+        sessionStorage.api === ""
+      )
+    ) {
+      apikeyStore.set(sessionStorage.api);
+    }
+  });
+
+  function keyChanged() {
+    sessionStorage.api = String(apikeyStore.apikey);
+  }
 </script>
 
 <template>
@@ -53,6 +70,7 @@
             placeholder="API-Key"
             type="password"
             class="p-2 rounded-2xl hover:text-gray-100 hover:bg-gray-800 transition-all duration-300 outline-0"
+            @input="keyChanged()"
           />
         </div>
       </div>
