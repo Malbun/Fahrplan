@@ -19,7 +19,7 @@
         <div>{{ props.estimatedArrival }}</div>
       </div>
       <div @click="click()">{{ props.name }}</div>
-      <div :id="quayFieldId">{{ `Gleis: ${displayQuay}` }}</div>
+      <div :id="quayFieldId">{{ displayQuay }}</div>
       <div class="flex flex-row space-x-1">
         <div>{{ props.timetabledDeparture }}</div>
         <div>{{ props.estimatedDeparture }}</div>
@@ -57,15 +57,25 @@
   onMounted(renderQuay);
 
   function renderQuay() {
+    let quayDecorator;
+
+    if (/\d/.test(props.quay)) {
+      quayDecorator = "Gleis: ";
+    } else if (props.quay === "") {
+      quayDecorator = "";
+    } else {
+      quayDecorator = "Kante: ";
+    }
+
     if (props.quay.includes("$!")) {
       if (!props.quay.includes("/")) {
-        displayQuay.value = props.quay.split("$!")[1];
+        displayQuay.value = quayDecorator + props.quay.split("$!")[1];
         document.getElementById(quayFieldId).style.color = "#ff1e1e";
       } else {
-        displayQuay.value = props.quay.split("$!")[1];
+        displayQuay.value = quayDecorator + props.quay.split("$!")[1];
       }
     } else {
-      displayQuay.value = props.quay;
+      displayQuay.value = quayDecorator + props.quay;
     }
   }
 
