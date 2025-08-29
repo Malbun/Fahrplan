@@ -4,7 +4,6 @@ import Departure from "./components/ArrivalDeparture/Departure.vue";
 import ArrivalDepartureOverview from "./components/ArrivalDeparture/ArrivalDepartureOverview.vue";
 import Trip from "./components/Trip/Trip.vue";
 
-
 const router = createRouter({
   history: createWebHistory("/Fahrplan/"),
   routes: [

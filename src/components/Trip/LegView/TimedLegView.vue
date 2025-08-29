@@ -22,7 +22,6 @@
   onUpdated(renderInformation); // render the information after the component has been updated
 
   function renderInformation() {
-
     const rawDuration = props.leg.duration; // access the duration in minutes
     const hours = Math.floor(rawDuration / 60); // calculate the whole hours from the raw duration
     const minutes = rawDuration % 60; // calculate the remaining minutes from the raw duration
