@@ -45,7 +45,6 @@
     if (tempQuay1.includes("$!")) {
       // checks if an estimated quay exists
       if (!tempQuay1.includes("/")) {
-        console.log(tempQuay1);
         // checks if the estimated quay has to be displayed as a quay change (ref. ZMUS)
         document.getElementById(originQuayId).style.color = "#ff1e1e"; // set the color of the quay text to red
         document.getElementById(originQuayId).style.fontWeight = "bold"; // set the font of the quay text to bold
