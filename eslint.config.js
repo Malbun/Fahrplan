@@ -58,6 +58,9 @@ export default [
     },
     rules: {
       "vue/multi-word-component-names": "off",
+      "no-console": "error",
+      "no-alert": "error",
+      "no-debugger": "error",
     },
   },
 
@@ -75,6 +78,9 @@ export default [
     },
     rules: {
       "vue/multi-word-component-names": "off",
+      "no-console": "error",
+      "no-alert": "error",
+      "no-debugger": "error",
     },
   },
 ];
