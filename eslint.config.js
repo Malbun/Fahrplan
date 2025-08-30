@@ -34,6 +34,9 @@ export default [
     },
     rules: {
       ...pluginTS.configs.recommended.rules,
+      "no-console": "error",
+      "no-alert": "error",
+      "no-debugger": "error",
     },
   },
 

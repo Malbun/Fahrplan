@@ -4,8 +4,6 @@
   const props = defineProps({
     trips: { type: Array, required: true },
   });
-
-  console.log(props.trips);
 </script>
 
 <template>
