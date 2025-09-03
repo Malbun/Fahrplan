@@ -12,6 +12,7 @@
   import { getDurationFromString } from "@/utils/TripUtils.ts";
   import { h, render } from "vue";
   import TripResultList from "@/components/Trip/TripResultList.vue";
+  import ViaField from "@/components/Trip/ViaField.vue";
 
   // stores
   const resultCountStore = useResultCountStore();
@@ -32,8 +33,8 @@
 
     const currentDate = new Date();
 
-    // configure the payload for the response
-    const payload = `
+    // configure the payload for the response without via
+    const payloadNormal = `
       <OJP xmlns="http://www.vdv.de/ojp" xmlns:siri="http://www.siri.org.uk/siri" version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vdv.de/ojp">
           <OJPRequest>
               <siri:ServiceRequest>
@@ -68,19 +69,18 @@
           </OJPRequest>
       </OJP>`;
 
-    let parsedResults = await fetch(
-      "https://api.opentransportdata.swiss/ojp20",
-      {
-        // send request to API Endpoint
-        method: "POST", // set HTTP Method
-        body: payload, // add payload to request
-        headers: {
-          // add headers to request
-          "Content-Type": "application/xml", // set Content Type to XML
-          Authorization: "Bearer " + apikeyStore.apikey, // set Auth header with bearer token
-        },
+    let parsedResults; // init parsedResults variable for the parsed response
+
+    parsedResults = await fetch("https://api.opentransportdata.swiss/ojp20", {
+      // send request to API Endpoint
+      method: "POST", // set HTTP Method
+      body: payloadNormal, // add payload to request
+      headers: {
+        // add headers to request
+        "Content-Type": "application/xml", // set Content Type to XML
+        Authorization: "Bearer " + apikeyStore.apikey, // set Auth header with bearer token
       },
-    )
+    })
       .then((res) => res.text()) // get body as text from response
       .then((xml) => {
         const parser = new XMLParser(); // init XML Parser
@@ -313,6 +313,7 @@
         />
       </div>
     </div>
+    <ViaField class="bg-blue-300 rounded-2xl p-3 mt-2" />
     <div class="text-gray-100 mt-2">
       <button
         class="bg-blue-300 text-black p-1.5 rounded-xl cursor-pointer hover:bg-gray-900 hover:text-white duration-300"
