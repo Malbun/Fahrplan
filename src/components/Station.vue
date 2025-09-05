@@ -104,5 +104,6 @@
 <style scoped>
   .suggestion {
     display: none;
+    z-index: 5;
   }
 </style>
