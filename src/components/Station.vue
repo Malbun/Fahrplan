@@ -34,10 +34,11 @@
     store: { type: Object, required: true },
     title: { type: String, required: true },
     id: { type: String, required: true },
+    changed: { type: Function, required: false, default: () => false },
   });
 
-  const inputElementId = `input-${props.id}`;
-  const suggestionsElementId = `suggestions-${props.id}`;
+  const inputElementId = `StationInput-${props.id}`;
+  const suggestionsElementId = `StationSuggestions-${props.id}`;
 
   props.store.set("");
 
@@ -49,6 +50,7 @@
   function onChange(element) {
     props.store.set(element);
     updateSuggestions();
+    props.changed();
   }
 
   function updateSuggestions() {
@@ -94,6 +96,7 @@
     if (mouseInSuggestions === mouseOutSuggestions + 1) {
       document.getElementById(inputElementId).value = currentSuggestions;
       props.store.set(currentSuggestions);
+      props.changed();
     }
   }
 </script>
@@ -101,5 +104,6 @@
 <style scoped>
   .suggestion {
     display: none;
+    z-index: 5;
   }
 </style>

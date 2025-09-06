@@ -53,7 +53,7 @@
           Fahrplan
         </RouterLink>
         <div class="m-0.5">
-          <label for="datetime-input">Datum/Uhrzeit:</label>
+          <label for="datetime-input">Datum/Uhrzeit: </label>
           <input
             id="datetime-input"
             v-model="dateStore.date"
@@ -63,7 +63,7 @@
           />
         </div>
         <div class="m-0.5">
-          <label for="apiKey-input">API-Key:</label>
+          <label for="apiKey-input">API-Key: </label>
           <input
             id="apiKey-input"
             v-model="apikeyStore.apikey"
