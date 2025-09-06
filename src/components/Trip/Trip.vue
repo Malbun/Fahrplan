@@ -13,6 +13,7 @@
   import { h, render } from "vue";
   import TripResultList from "@/components/Trip/TripResultList.vue";
   import ViaField from "@/components/Trip/ViaField.vue";
+  import { useViaStore } from "@/stores/ViaStore.js";
 
   // stores
   const resultCountStore = useResultCountStore();
@@ -20,8 +21,9 @@
   const tripStation2Store = useTripStation2Store();
   const dateStore = useDateStore();
   const apikeyStore = useApikeyStore();
+  const viaStore = useViaStore();
 
-  resultCountStore.set(15); // set result counter default to 15
+  resultCountStore.set(10); // set result counter default to 10
 
   async function run() {
     const originDidokResult = await getStationDetails(
@@ -31,10 +33,27 @@
       tripStation2Store.tripStation2,
     ); // get the station details for station2
 
-    const currentDate = new Date();
+    const currentDate = new Date(); // get current date and time for timestamps
 
-    // configure the payload for the response without via
-    const payloadNormal = `
+    let viaAddon = "";
+
+    if (viaStore.vias.length === 1) {
+      const viaDidok = (await getStationDetails(viaStore.vias[0])).didok;
+
+      viaAddon = `
+      <Via>
+        <ViaPoint>
+            <StopPlaceRef>${viaDidok}</StopPlaceRef>
+            <Name>
+                <Text>${viaStore.vias[0]}</Text>
+            </Name>
+        </ViaPoint>
+      </Via>
+      `;
+    }
+
+    // configure the payload for the request
+    const payload = `
       <OJP xmlns="http://www.vdv.de/ojp" xmlns:siri="http://www.siri.org.uk/siri" version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vdv.de/ojp">
           <OJPRequest>
               <siri:ServiceRequest>
@@ -60,6 +79,7 @@
                               </Name>
                           </PlaceRef>
                       </Destination>
+                      ${viaAddon}
                       <Params>
                           <NumberOfResults>${Math.floor(resultCountStore.resultCount)}</NumberOfResults>
                           <IncludeIntermediateStops>true</IncludeIntermediateStops>
@@ -74,7 +94,7 @@
     parsedResults = await fetch("https://api.opentransportdata.swiss/ojp20", {
       // send request to API Endpoint
       method: "POST", // set HTTP Method
-      body: payloadNormal, // add payload to request
+      body: payload, // add payload to request
       headers: {
         // add headers to request
         "Content-Type": "application/xml", // set Content Type to XML

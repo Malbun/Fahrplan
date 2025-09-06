@@ -17,6 +17,7 @@
   // updates the via fields view every time the viaDisplayToggle variable changes
   watch(viaDisplayToggle, () => {
     updateViaStations(); // update the station input view
+    changeValueOnToggle(); // remove the values from every via field on toggle off
   });
 
   // runs when the component is fully loaded
@@ -31,7 +32,7 @@
           store: viaPseudoStationStore,
           title: "Via:",
           id: "0",
-          changed: stationValueChanged,
+          changed: writeViaToStore, // use updateViaStation for multiple Via-Fields
         },
         null,
       ),
@@ -39,6 +40,21 @@
     });
     updateViaStations(); // update the via station view
   });
+
+  // check if the button has toggled to false. => remove all values from all via fields
+  function changeValueOnToggle() {
+    // check if the button has toggled to false. => remove all values from all via fields
+    if (!viaDisplayToggle.value) {
+      // loop over all inputs
+      for (let i of viaFieldNodes) {
+        const currentInput = document.getElementById(`StationInput-${i.id}`); // get current input
+        // checks if the current input ist no null. Happens on the first call
+        if (currentInput !== null) {
+          currentInput.value = ""; // remove value from input
+        }
+      }
+    }
+  }
 
   // updates the via station view
   function updateViaStations() {
@@ -51,6 +67,8 @@
   }
 
   // is call every time the value in a station input is changed
+  // IMPORTANT: FUNCTION ESCAPED FROM ESLINT!
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function stationValueChanged() {
     let lastBlankInput = -1; // init the variable for the index of the last blank input
     let secondLastBlankInput = -1; // init the variable for the index of the second last blank input
@@ -98,6 +116,11 @@
 
     updateViaStations(); // triggers the re-render for the input fields
 
+    writeViaToStore(); // gets all data from the via fields and saves it to the ViaStore
+  }
+
+  // gets all data from the via fields and saves it to the ViaStore
+  function writeViaToStore() {
     viaStore.clear(); // clear viaStore
 
     // loop over all inputs
