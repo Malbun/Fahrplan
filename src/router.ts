@@ -1,11 +1,11 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import Arrival from "./components/ArrivalDeparture/Arrival.vue";
 import Departure from "./components/ArrivalDeparture/Departure.vue";
 import ArrivalDepartureOverview from "./components/ArrivalDeparture/ArrivalDepartureOverview.vue";
 import Trip from "./components/Trip/Trip.vue";
 
 const router = createRouter({
-  history: createWebHistory("/Fahrplan/"),
+  history: createWebHashHistory("/Fahrplan/"),
   routes: [
     {
       path: "/arrdep",
