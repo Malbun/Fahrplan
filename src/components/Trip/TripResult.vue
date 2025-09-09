@@ -14,7 +14,8 @@
   const walkPrefixId = `${props.trip.id}TripResultWalkPrefixId`; // contains the ID for a div who contains the walk icon and minute information before the trip
   const walkAfterId = `${props.trip.id}TripResultWalkAfterId`; // contains the ID for a div who contains the walk icon and minute information before the trip
   const quayId = `${props.trip.id}TripResultQuayId`; // contains the ID for the div who contains the quay text
-  const legListId = `${props.trip.id}TripResultLegListId`; // contains the div who contains the leg list
+  const legListId = `${props.trip.id}TripResultLegListId`; // contains the ID for the div who contains the leg list
+  const mainContainerId = `${props.trip.id}TripResultContainer`; // contains the ID for the div who contains the whole result
 
   // reactive variables
   const serviceName = ref(""); // stores the name of the first service from the trip
@@ -35,11 +36,15 @@
 
   // displays all information
   function renderInformation() {
-    //console.log(props.trip);
-
     const rawDuration = props.trip.duration; // access the duration in minutes
     const hours = Math.floor(rawDuration / 60); // calculate the whole hours from the raw duration
     const minutes = rawDuration % 60; // calculate the remaining minutes from the raw duration
+
+    // checks if the trip has a cancelled leg
+    if (props.trip.cancelled) {
+      document.getElementById(mainContainerId).classList.add("border-red-600"); // set the border color of the main container to red
+      document.getElementById(mainContainerId).classList.add("border-3"); // display a border on the main container
+    }
 
     if (hours === 0) {
       // checks if hours is 0
@@ -130,7 +135,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col space-y-0.5">
+  <div :id="mainContainerId" class="flex flex-col space-y-0.5 bg-gray-600">
     <div @click="clicked()">
       <div class="flex flex-row space-x-2">
         <div>{{ serviceName }}</div>
