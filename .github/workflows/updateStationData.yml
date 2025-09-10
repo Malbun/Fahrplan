@@ -28,7 +28,7 @@ jobs:
 
       - name: Create Pull Request
         id: create-pr
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           branch: auto-update-stationData
           commit-message: 'Auto update stationData'
@@ -43,3 +43,7 @@ jobs:
         with:
           pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
           merge-method: 'squash'
+
+  deploy:
+    needs: run-script
+    uses: ./.github/workflows/deploy.yml
