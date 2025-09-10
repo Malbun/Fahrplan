@@ -43,3 +43,7 @@ jobs:
         with:
           pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
           merge-method: 'squash'
+
+  deploy:
+    needs: run-script
+    uses: ./.github/workflows/deploy.yml
