@@ -83,6 +83,7 @@
                       <Params>
                           <NumberOfResults>${Math.floor(resultCountStore.resultCount)}</NumberOfResults>
                           <IncludeIntermediateStops>true</IncludeIntermediateStops>
+                          <UseRealtimeData>full</UseRealtimeData>
                       </Params>
                   </OJPTripRequest>
               </siri:ServiceRequest>
@@ -128,6 +129,14 @@
       processedTrip.endTime = trip["EndTime"]; // set the end time from the trip
       processedTrip.legs = processTrip(trip); // process the trip
       processedTrip.duration = getDurationFromString(trip["Duration"]); // set duration from trip
+      // check if an Unplanned tag exists
+      // The Unplanned tag contains information if the train runs
+      if (Object.hasOwn(trip, "Unplanned")) {
+        processedTrip.cancelled = trip["Unplanned"]; // get the value
+      } else {
+        processedTrip.cancelled = false; // set the default value to false
+      }
+
       processedTrips.push(processedTrip); // add processed trip to the array with the processed trips
     }
 
@@ -200,22 +209,34 @@
     leg.trainDestination = service["DestinationText"]["Text"]; // set train destination from DestinationText
 
     leg.ptMode = service["Mode"]["PtMode"]; // set mode from PtMode
-    leg.modeShort = service["Mode"]["ShortName"]["Text"];
+    leg.modeShort = service["Mode"]["ShortName"]["Text"]; // get the name of the service
 
+    // check if an Unplanned tag exists
+    // The Unplanned tag contains information if the train runs
+    if (Object.hasOwn(service, "Unplanned")) {
+      leg.cancelled = service["Unplanned"]; // get the default value
+    } else {
+      leg.cancelled = false; // set the default value to false
+    }
+
+    // check if the legBoard has an estimated time
     if (Object.hasOwn(legBoard["ServiceDeparture"], "EstimatedTime")) {
-      // check if the legBoard has an estimated time
       leg.startTime = legBoard["ServiceDeparture"]["EstimatedTime"]; // set the start time to the estimated time
+      leg.startTimeTimetabled = legBoard["ServiceDeparture"]["TimetabledTime"]; // set the start time timetabled to the timetabled time
     } else {
       // has no estimated time
       leg.startTime = legBoard["ServiceDeparture"]["TimetabledTime"]; // set the start time to the timetabled time
+      leg.startTimeTimetabled = legBoard["ServiceDeparture"]["TimetabledTime"]; // set the start time timetabled to the timetabled time
     }
 
+    // check if the legAlight has an estimated time
     if (Object.hasOwn(legAlight["ServiceArrival"], "EstimatedTime")) {
-      // check if the legAlight has an estimated time
       leg.endTime = legAlight["ServiceArrival"]["EstimatedTime"]; // set the end time to the estimated time
+      leg.endTimeTimetabled = legAlight["ServiceArrival"]["TimetabledTime"]; // set the end time timetable to the timetabled time
     } else {
       // has no estimated time
       leg.endTime = legAlight["ServiceArrival"]["TimetabledTime"]; // set the end time to the timetabled time
+      leg.endTimeTimetabled = legAlight["ServiceArrival"]["TimetabledTime"]; // set the end time timetable to the timetabled time
     }
 
     const rawCalls = []; // init array for unprocessed intermediate calls
@@ -237,8 +258,8 @@
     rawCalls.push(legAlight); // add legAlight to rawCalls
 
     const calls = []; // init array for processed calls
+    // iterate over each stop in the leg
     for (const stop of rawCalls) {
-      // iterate over each stop in the leg
       const call = {}; // init data structure for a call
 
       call.order = stop["Order"]; // set order in call

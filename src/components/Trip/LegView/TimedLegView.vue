@@ -1,6 +1,6 @@
 <script setup>
-  import { onMounted, onUpdated, ref } from "vue";
-  import { getTimeAsString } from "@/utils/DateUtils.js";
+import {h, onMounted, onUpdated, ref, render} from "vue";
+  import {getTimeAsString, isDelayed} from "@/utils/DateUtils.js";
   import TrackRunner from "@/components/TrackRunner/TrackRunner.vue";
 
   const props = defineProps({
@@ -12,11 +12,16 @@
   const destinationQuayId = `${props.id}destinationQuay`; // id for destinationQuay tag
   const trackRunnerContainerId = `${props.id}TripLegViewTrackRunnerContainer`; // id for trackRunner container tag
   const trackRunnerId = `${props.id}TripLegViewTrackRunner`; // id for trackRunner tag
+  const mainContainerId = `${props.id}TripLegViewMainContainer`; // id for the main container
+  const estimatedStartTimeId = `${props.id}TripLegViewEstimatedStartTime`;
+  const estimatedEndTimeId = `${props.id}TripLegViewEstimatedEndTime`;
 
   const serviceName = ref(""); // stores the name of the service
   const originQuay = ref(""); // stores the quay at the origin
   const destinationQuay = ref(""); // stores the quay at the destination
   const duration = ref(""); // stores the duration as string
+  const svgStyle = ref("stroke: black; stroke-width: 4px"); // stores the style information for the line in the SVG graphic
+  const svgCircleColor = ref("black"); // stores the color for the circle in the SVG graphic
 
   onMounted(renderInformation); // render the information after the component was mounted and loaded
   onUpdated(renderInformation); // render the information after the component has been updated
@@ -25,6 +30,35 @@
     const rawDuration = props.leg.duration; // access the duration in minutes
     const hours = Math.floor(rawDuration / 60); // calculate the whole hours from the raw duration
     const minutes = rawDuration % 60; // calculate the remaining minutes from the raw duration
+
+    // check if the train si delayed at the start of the leg
+    if (isDelayed(props.leg.startTime, props.leg.calls[0].timetabledDeparture)) {
+      document.getElementById(estimatedStartTimeId).style.color = "#ff1e1e"; // set the text color of the estimated time to red
+    }
+
+    // check if the train si delayed at the end of the leg
+    if (isDelayed(props.leg.endTime, props.leg.calls[props.leg.calls.length - 1].timetabledArrival)) {
+      document.getElementById(estimatedEndTimeId).style.color = "#ff1e1e"; // set the text color of the estimated time to red
+    }
+    console.log(trackRunnerId)
+
+    const trackRunnerVNode = h(TrackRunner, {
+      id: `${props.id}TripLegViewTrackRunner`,
+      currentStation: 0,
+      arrival: false,
+      calls: props.leg.calls,
+      useClick: false,
+      class: "bg-gray-700 rounded-xl"
+    });
+
+    const trackRunnerContainer = document.getElementById(trackRunnerContainerId);
+    render(trackRunnerVNode, trackRunnerContainer);
+
+    // checks if the train is cancelled
+    if (props.leg.cancelled) {
+      svgStyle.value = "stroke: red; stroke-width: 4px"; // sets the style of the line in the SVG graphic to red
+      svgCircleColor.value = "red"; // sets the color of the circle in the SVG graphic to red
+    }
 
     if (hours === 0) {
       // checks if hours is 0
@@ -103,6 +137,7 @@
 
 <template>
   <div
+    :id="mainContainerId"
     class="flex flex-row justify-between mb-1 mt-1 bg-gray-600 p-1.5 rounded-xl text-white"
     @click="clicked()"
   >
@@ -117,13 +152,13 @@
               )
             }}
           </div>
-          <div class="font-bold">
+          <div class="font-bold" :id="estimatedStartTimeId">
             {{ getTimeAsString(new Date(props.leg.startTime), true) }}
           </div>
         </div>
         <div>{{ duration }}</div>
         <div>
-          <div class="font-bold">
+          <div class="font-bold" :id="estimatedEndTimeId">
             {{ getTimeAsString(new Date(props.leg.endTime), true) }}
           </div>
           <div>
@@ -140,14 +175,8 @@
       </div>
       <div class="ml-1 mr-1">
         <svg width="20" height="100%">
-          <line
-            x1="10"
-            y1="10"
-            x2="10"
-            y2="95%"
-            style="stroke: black; stroke-width: 4px"
-          />
-          <circle r="7" cx="10" cy="10" fill="black" />
+          <line x1="10" y1="10" x2="10" y2="95%" :style="svgStyle" />
+          <circle r="7" cx="10" cy="10" :fill="svgCircleColor" />
           <circle r="4" cx="10" cy="10" fill="#dddddd" />
         </svg>
       </div>
@@ -166,14 +195,7 @@
     </div>
   </div>
   <div :id="trackRunnerContainerId" style="display: none">
-    <TrackRunner
-      :id="trackRunnerId"
-      :current-station="0"
-      :arrival="false"
-      :calls="props.leg.calls"
-      :use-click="false"
-      class="bg-gray-700 rounded-xl"
-    />
+
   </div>
 </template>
 

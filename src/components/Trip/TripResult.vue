@@ -1,6 +1,6 @@
 <script setup>
   // imports
-  import { getTimeAsString } from "@/utils/DateUtils.js";
+  import {getTimeAsString, isDelayed} from "@/utils/DateUtils.js";
   import { onMounted, onUpdated, ref } from "vue";
   import { BsPersonWalking } from "vue-icons-plus/bs";
   import LegList from "@/components/Trip/LegView/LegList.vue";
@@ -14,7 +14,10 @@
   const walkPrefixId = `${props.trip.id}TripResultWalkPrefixId`; // contains the ID for a div who contains the walk icon and minute information before the trip
   const walkAfterId = `${props.trip.id}TripResultWalkAfterId`; // contains the ID for a div who contains the walk icon and minute information before the trip
   const quayId = `${props.trip.id}TripResultQuayId`; // contains the ID for the div who contains the quay text
-  const legListId = `${props.trip.id}TripResultLegListId`; // contains the div who contains the leg list
+  const legListId = `${props.trip.id}TripResultLegListId`; // contains the ID for the div who contains the leg list
+  const mainContainerId = `${props.trip.id}TripResultContainer`; // contains the ID for the div who contains the whole result
+  const startTimeId = `${props.trip.id}StartTime`; // contains the ID for the startTime display
+  const endTimeId = `${props.trip.id}EndTime`; // contains the ID for the endTime display
 
   // reactive variables
   const serviceName = ref(""); // stores the name of the first service from the trip
@@ -35,11 +38,15 @@
 
   // displays all information
   function renderInformation() {
-    //console.log(props.trip);
-
     const rawDuration = props.trip.duration; // access the duration in minutes
     const hours = Math.floor(rawDuration / 60); // calculate the whole hours from the raw duration
     const minutes = rawDuration % 60; // calculate the remaining minutes from the raw duration
+
+    // checks if the trip has a cancelled leg
+    if (props.trip.cancelled) {
+      document.getElementById(mainContainerId).classList.add("border-red-600"); // set the border color of the main container to red
+      document.getElementById(mainContainerId).classList.add("border-3"); // display a border on the main container
+    }
 
     if (hours === 0) {
       // checks if hours is 0
@@ -60,22 +67,37 @@
       document.getElementById(walkPrefixId).style.display = "flex"; // display the prefix icon and time
     }
 
+    // checks if the last leg is a transfer leg
     if (props.trip.legs[props.trip.legs.length - 1].type === "transfer") {
-      // checks if the last leg is a transfer leg
+      renderDelayOnLastTimedLeg(2); // render delay
       endTime.value = props.trip.legs[props.trip.legs.length - 2].endTime; // sets the end time to the end time of the last timed leg
       walkAfter.value =
         "'" + props.trip.legs[props.trip.legs.length - 1].duration; // set the time to walk after the last timed leg to the duration of the last transfer leg
       document.getElementById(walkAfterId).style.display = "flex"; // display the walk icon and the time after the last timed leg
     } else {
       // last leg is a timed leg
+      renderDelayOnLastTimedLeg(1) // render delay
       document.getElementById(walkAfterId).style.display = "none"; // hide the walk icon and the time after the last timed leg
       endTime.value = props.trip.legs[props.trip.legs.length - 1].endTime; // set the end time to the end time of the last timed leg
+    }
+  }
+
+  // renders a possible delay in the last leg
+  function renderDelayOnLastTimedLeg(index) {
+    // check if the train is delayed
+    if (isDelayed(props.trip.legs[props.trip.legs.length - index].endTime, props.trip.legs[props.trip.legs.length - index].endTimeTimetabled)) {
+      document.getElementById(endTimeId).style.color = "#ff1e1e"; // change text color from the time display to red
     }
   }
 
   // renders the information about the first timed leg
   function renderFirstTimedLeg(index) {
     startTime.value = props.trip.legs[index].startTime; // set the start time to the start time of the first timed leg
+
+    // check if the train is delayed
+    if (isDelayed(props.trip.legs[index].startTime, props.trip.legs[index].startTimeTimetabled)) {
+      document.getElementById(startTimeId).style.color = "#ff1e1e"; // change text color from the time display to red
+    }
 
     let prefix = ""; // init variable for the prefix for the line name
     if (props.trip.legs[index].ptMode !== "rail") {
@@ -99,7 +121,6 @@
       if (!tempQuay.includes("/")) {
         // checks if the estimated quay has to be displayed as a quay change (ref. ZMUS)
         document.getElementById(quayId).style.color = "#ff1e1e"; // set the color of the quay text to red
-        document.getElementById(quayId).style.fontWeight = "bold"; // set the font of the quay text to bold
       }
       tempQuay = tempQuay.split("$!")[1]; // set the temp variable to the estimated quay
     }
@@ -130,7 +151,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col space-y-0.5">
+  <div :id="mainContainerId" class="flex flex-col space-y-0.5 bg-gray-600">
     <div @click="clicked()">
       <div class="flex flex-row space-x-2">
         <div>{{ serviceName }}</div>
@@ -142,11 +163,11 @@
             <BsPersonWalking />
             <div>{{ walkPrefix }}</div>
           </div>
-          <div>{{ getTimeAsString(new Date(startTime)) }}</div>
+          <div :id="startTimeId">{{ getTimeAsString(new Date(startTime)) }}</div>
         </div>
         <div>{{ duration }}</div>
         <div class="flex flex-row" style="width: 90px">
-          <div>{{ getTimeAsString(new Date(endTime)) }}</div>
+          <div :id="endTimeId">{{ getTimeAsString(new Date(endTime)) }}</div>
           <div :id="walkAfterId" class="flex flex-row ml-1">
             <BsPersonWalking />
             <div>{{ walkAfter }}</div>
