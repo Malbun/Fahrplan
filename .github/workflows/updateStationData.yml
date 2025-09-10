@@ -37,7 +37,6 @@ jobs:
           draft: false
 
       - name: Auto-merge Pull Request
-        if: steps.pr.outputs.pull-request-number != ''
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
           pull-request-number: ${{ steps.pr.outputs.pull-request-number }}
