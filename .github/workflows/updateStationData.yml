@@ -27,6 +27,7 @@ jobs:
         run: python updateStationData.py
 
       - name: Create Pull Request
+        id: create-pr
         uses: peter-evans/create-pull-request@v6
         with:
           branch: auto-update-stationData
@@ -37,8 +38,8 @@ jobs:
           draft: false
 
       - name: Auto-merge Pull Request
-        if: steps.get-pr.outputs.number != ''
+        if: steps.create-pr.outputs.pull-request-number != ''
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
-          pull-request-number: ${{ steps.pr.outputs.pull-request-number }}
+          pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
           merge-method: 'squash'
