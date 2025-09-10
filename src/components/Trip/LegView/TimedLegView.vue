@@ -1,6 +1,6 @@
 <script setup>
-  import { onMounted, onUpdated, ref } from "vue";
-  import { getTimeAsString } from "@/utils/DateUtils.js";
+import {h, onMounted, onUpdated, ref, render} from "vue";
+  import {getTimeAsString, isDelayed} from "@/utils/DateUtils.js";
   import TrackRunner from "@/components/TrackRunner/TrackRunner.vue";
 
   const props = defineProps({
@@ -13,6 +13,8 @@
   const trackRunnerContainerId = `${props.id}TripLegViewTrackRunnerContainer`; // id for trackRunner container tag
   const trackRunnerId = `${props.id}TripLegViewTrackRunner`; // id for trackRunner tag
   const mainContainerId = `${props.id}TripLegViewMainContainer`; // id for the main container
+  const estimatedStartTimeId = `${props.id}TripLegViewEstimatedStartTime`;
+  const estimatedEndTimeId = `${props.id}TripLegViewEstimatedEndTime`;
 
   const serviceName = ref(""); // stores the name of the service
   const originQuay = ref(""); // stores the quay at the origin
@@ -28,6 +30,29 @@
     const rawDuration = props.leg.duration; // access the duration in minutes
     const hours = Math.floor(rawDuration / 60); // calculate the whole hours from the raw duration
     const minutes = rawDuration % 60; // calculate the remaining minutes from the raw duration
+
+    // check if the train si delayed at the start of the leg
+    if (isDelayed(props.leg.startTime, props.leg.calls[0].timetabledDeparture)) {
+      document.getElementById(estimatedStartTimeId).style.color = "#ff1e1e"; // set the text color of the estimated time to red
+    }
+
+    // check if the train si delayed at the end of the leg
+    if (isDelayed(props.leg.endTime, props.leg.calls[props.leg.calls.length - 1].timetabledArrival)) {
+      document.getElementById(estimatedEndTimeId).style.color = "#ff1e1e"; // set the text color of the estimated time to red
+    }
+    console.log(trackRunnerId)
+
+    const trackRunnerVNode = h(TrackRunner, {
+      id: `${props.id}TripLegViewTrackRunner`,
+      currentStation: 0,
+      arrival: false,
+      calls: props.leg.calls,
+      useClick: false,
+      class: "bg-gray-700 rounded-xl"
+    });
+
+    const trackRunnerContainer = document.getElementById(trackRunnerContainerId);
+    render(trackRunnerVNode, trackRunnerContainer);
 
     // checks if the train is cancelled
     if (props.leg.cancelled) {
@@ -127,13 +152,13 @@
               )
             }}
           </div>
-          <div class="font-bold">
+          <div class="font-bold" :id="estimatedStartTimeId">
             {{ getTimeAsString(new Date(props.leg.startTime), true) }}
           </div>
         </div>
         <div>{{ duration }}</div>
         <div>
-          <div class="font-bold">
+          <div class="font-bold" :id="estimatedEndTimeId">
             {{ getTimeAsString(new Date(props.leg.endTime), true) }}
           </div>
           <div>
@@ -170,14 +195,7 @@
     </div>
   </div>
   <div :id="trackRunnerContainerId" style="display: none">
-    <TrackRunner
-      :id="trackRunnerId"
-      :current-station="0"
-      :arrival="false"
-      :calls="props.leg.calls"
-      :use-click="false"
-      class="bg-gray-700 rounded-xl"
-    />
+
   </div>
 </template>
 

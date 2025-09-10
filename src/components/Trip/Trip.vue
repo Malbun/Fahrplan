@@ -219,20 +219,24 @@
       leg.cancelled = false; // set the default value to false
     }
 
+    // check if the legBoard has an estimated time
     if (Object.hasOwn(legBoard["ServiceDeparture"], "EstimatedTime")) {
-      // check if the legBoard has an estimated time
       leg.startTime = legBoard["ServiceDeparture"]["EstimatedTime"]; // set the start time to the estimated time
+      leg.startTimeTimetabled = legBoard["ServiceDeparture"]["TimetabledTime"]; // set the start time timetabled to the timetabled time
     } else {
       // has no estimated time
       leg.startTime = legBoard["ServiceDeparture"]["TimetabledTime"]; // set the start time to the timetabled time
+      leg.startTimeTimetabled = legBoard["ServiceDeparture"]["TimetabledTime"]; // set the start time timetabled to the timetabled time
     }
 
+    // check if the legAlight has an estimated time
     if (Object.hasOwn(legAlight["ServiceArrival"], "EstimatedTime")) {
-      // check if the legAlight has an estimated time
       leg.endTime = legAlight["ServiceArrival"]["EstimatedTime"]; // set the end time to the estimated time
+      leg.endTimeTimetabled = legAlight["ServiceArrival"]["TimetabledTime"]; // set the end time timetable to the timetabled time
     } else {
       // has no estimated time
       leg.endTime = legAlight["ServiceArrival"]["TimetabledTime"]; // set the end time to the timetabled time
+      leg.endTimeTimetabled = legAlight["ServiceArrival"]["TimetabledTime"]; // set the end time timetable to the timetabled time
     }
 
     const rawCalls = []; // init array for unprocessed intermediate calls
