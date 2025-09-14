@@ -1,25 +1,13 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import Arrival from "./components/ArrivalDeparture/Arrival.vue";
-import Departure from "./components/ArrivalDeparture/Departure.vue";
-import ArrivalDepartureOverview from "./components/ArrivalDeparture/ArrivalDepartureOverview.vue";
 import Trip from "./components/Trip/Trip.vue";
+import ArrivalDeparture from "./components/ArrivalDeparture/ArrivalDeparture.vue";
 
 const router = createRouter({
   history: createWebHashHistory("/Fahrplan/"),
   routes: [
     {
       path: "/arrdep",
-      component: ArrivalDepartureOverview,
-      children: [
-        {
-          path: "/arr",
-          component: Arrival,
-        },
-        {
-          path: "/dep",
-          component: Departure,
-        },
-      ],
+      component: ArrivalDeparture,
     },
     {
       path: "/trip",
