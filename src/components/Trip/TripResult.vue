@@ -1,6 +1,6 @@
 <script setup>
   // imports
-  import {getTimeAsString, isDelayed} from "@/utils/DateUtils.js";
+  import { getTimeAsString, isDelayed } from "@/utils/DateUtils.js";
   import { onMounted, onUpdated, ref } from "vue";
   import { BsPersonWalking } from "vue-icons-plus/bs";
   import LegList from "@/components/Trip/LegView/LegList.vue";
@@ -76,7 +76,7 @@
       document.getElementById(walkAfterId).style.display = "flex"; // display the walk icon and the time after the last timed leg
     } else {
       // last leg is a timed leg
-      renderDelayOnLastTimedLeg(1) // render delay
+      renderDelayOnLastTimedLeg(1); // render delay
       document.getElementById(walkAfterId).style.display = "none"; // hide the walk icon and the time after the last timed leg
       endTime.value = props.trip.legs[props.trip.legs.length - 1].endTime; // set the end time to the end time of the last timed leg
     }
@@ -85,7 +85,12 @@
   // renders a possible delay in the last leg
   function renderDelayOnLastTimedLeg(index) {
     // check if the train is delayed
-    if (isDelayed(props.trip.legs[props.trip.legs.length - index].endTime, props.trip.legs[props.trip.legs.length - index].endTimeTimetabled)) {
+    if (
+      isDelayed(
+        props.trip.legs[props.trip.legs.length - index].endTime,
+        props.trip.legs[props.trip.legs.length - index].endTimeTimetabled,
+      )
+    ) {
       document.getElementById(endTimeId).style.color = "#ff1e1e"; // change text color from the time display to red
     }
   }
@@ -95,7 +100,12 @@
     startTime.value = props.trip.legs[index].startTime; // set the start time to the start time of the first timed leg
 
     // check if the train is delayed
-    if (isDelayed(props.trip.legs[index].startTime, props.trip.legs[index].startTimeTimetabled)) {
+    if (
+      isDelayed(
+        props.trip.legs[index].startTime,
+        props.trip.legs[index].startTimeTimetabled,
+      )
+    ) {
       document.getElementById(startTimeId).style.color = "#ff1e1e"; // change text color from the time display to red
     }
 
@@ -163,7 +173,9 @@
             <BsPersonWalking />
             <div>{{ walkPrefix }}</div>
           </div>
-          <div :id="startTimeId">{{ getTimeAsString(new Date(startTime)) }}</div>
+          <div :id="startTimeId">
+            {{ getTimeAsString(new Date(startTime)) }}
+          </div>
         </div>
         <div>{{ duration }}</div>
         <div class="flex flex-row" style="width: 90px">
