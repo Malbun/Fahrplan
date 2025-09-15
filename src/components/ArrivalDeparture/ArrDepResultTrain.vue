@@ -1,11 +1,13 @@
 <script setup>
   import { onMounted, onUpdated, ref } from "vue";
+  import { getDateAsString, getTimeAsString } from "@/utils/DateUtils.js";
 
   const props = defineProps({
     stopEvent: { type: Object, required: true },
   });
 
-  const stopEvent = props.stopEvent["StopEvent"];
+  console.log(props.stopEvent);
+
   const hasPrevious = ref(true);
   const hasOnward = ref(true);
   const mobileTimeAlign = ref("");
@@ -18,48 +20,62 @@
   const estimatedDeparture = ref("08:16:36");
   const quay = ref("");
   const quayColor = ref("white");
-  const servicename = ref("IR13");
+  const serviceName = ref("IR13");
 
   onMounted(render);
   onUpdated(render);
 
   function render() {
-    processThisCall(stopEvent["ThisCall"]);
+    hasPrevious.value = props.stopEvent.hasPrevious;
+    hasOnward.value = props.stopEvent.hasOnward;
+    origin.value = props.stopEvent.origin;
+    destination.value = props.stopEvent.destination;
+    currentStation.value = props.stopEvent.thisCall.stationName;
+    serviceName.value = props.stopEvent.serviceName;
 
     if (hasPrevious.value && hasOnward.value) {
       mobileTimeAlign.value = "center";
+      timetabledArrival.value = getTimeAsString(
+        new Date(props.stopEvent.thisCall.timetabledArrival),
+        true
+      );
+      estimatedArrival.value = getTimeAsString(
+        new Date(props.stopEvent.thisCall.estimatedArrival),
+        true
+      );
+      timetabledDeparture.value = getTimeAsString(
+        new Date(props.stopEvent.thisCall.timetabledDeparture),
+        true
+      );
+      estimatedDeparture.value = getTimeAsString(
+        new Date(props.stopEvent.thisCall.estimatedDeparture),
+        true
+      );
     }
 
     if (!hasPrevious.value && hasOnward.value) {
       mobileTimeAlign.value = "start";
+      timetabledDeparture.value = getTimeAsString(
+        new Date(props.stopEvent.thisCall.timetabledDeparture),
+        true
+      );
+      estimatedDeparture.value = getTimeAsString(
+        new Date(props.stopEvent.thisCall.estimatedDeparture),
+        true
+      );
     }
 
     if (hasPrevious.value && !hasOnward.value) {
       mobileTimeAlign.value = "end";
+      timetabledArrival.value = getTimeAsString(
+        new Date(props.stopEvent.thisCall.timetabledArrival),
+        true
+      );
+      estimatedArrival.value = getTimeAsString(
+        new Date(props.stopEvent.thisCall.estimatedArrival),
+        true
+      );
     }
-  }
-
-  function processThisCall(thisCall) {
-    const callAtStop = thisCall["CallAtStop"];
-    let rawQuay = String(callAtStop["PlannedQuay"]["Text"]);
-
-    if (Object.hasOwn(callAtStop, "EstimatedQuay")) {
-      const estimatedQuay = String(callAtStop["EstimatedQuay"]["Text"]);
-      if (rawQuay.includes(estimatedQuay !== rawQuay)) {
-        rawQuay = estimatedQuay;
-        if (!rawQuay.includes("/")) {
-          quayColor.value = "red";
-        }
-      }
-    }
-
-    if (/\d/.test(rawQuay)) {
-      quay.value = `Gleis: ${rawQuay}`;
-    } else {
-      quay.value = `Kante: ${rawQuay}`;
-    }
-
-    currentStation.value = callAtStop["StopPointName"]["Text"];
   }
 </script>
 
@@ -68,7 +84,7 @@
     <!-- desktop -->
     <div class="desktop">
       <div class="flex flex-col space-y-1">
-        <div>{{ servicename }}</div>
+        <div>{{ serviceName }}</div>
         <div class="flex flex-row space-x-2 justify-between items-center">
           <div v-if="hasPrevious" style="flex-shrink: 0">{{ origin }}</div>
           <div v-if="hasPrevious">
@@ -159,7 +175,7 @@
       <div class="flex flex-row items-center justify-center space-x-2">
         <div>
           <div style="width: 20px; direction: rtl; white-space: nowrap">
-            {{ servicename }}
+            {{ serviceName }}
           </div>
         </div>
         <div class="flex flex-row justify-center space-x-1.5 dynamicAlign">

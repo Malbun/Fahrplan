@@ -19,7 +19,7 @@ export const getDateAsString = (date: Date): string => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
-export const inputStringToDate = (input: string): Date => {
+export const inputStringToDate = (input): Date => {
   return new Date(input);
 };
 

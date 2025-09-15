@@ -2,9 +2,10 @@
   import Station from "@/components/Station.vue";
   import { useStationStore } from "@/stores/StationStore.js";
   import { useResultCountStore } from "@/stores/ResultCountStore.js";
-  import { onMounted } from "vue";
+  import { h, onMounted, render } from "vue";
   import { useDateStore } from "@/stores/DateStore.js";
   import { processArrivalDeparture } from "@/utils/ArrivalDeparture.js";
+  import ArrDepResultTrain from "@/components/ArrivalDeparture/ArrDepResultTrain.vue";
 
   const stationStore = useStationStore();
   const resultCountStore = useResultCountStore();
@@ -19,11 +20,29 @@
 
   // gets all information. Triggered by button click
   async function run() {
-    const result = await processArrivalDeparture(
+    const allResults = await processArrivalDeparture(
       stationStore.station,
       dateStore.date,
       resultCountStore.resultCount,
     );
+
+    const resultContainer = document.getElementById("arrdepResultContainer");
+
+    const arrDepTrainArray = [];
+    for (const result of allResults) {
+      const currentArrivalDeparture = h(
+        ArrDepResultTrain,
+        {
+          stopEvent: result,
+        },
+        null,
+      );
+      arrDepTrainArray.push(currentArrivalDeparture);
+    }
+
+    const resultDivVNode = h("div", arrDepTrainArray);
+    render(resultDivVNode, resultContainer);
+
   }
 </script>
 

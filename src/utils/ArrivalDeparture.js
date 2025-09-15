@@ -441,16 +441,14 @@ export const processArrivalDeparture = async (
 
   const finalResult = []; // init array for the final result
 
+  console.log(parsedArrivalResults);
+
   // loop resultCount times
   for (let i = 0; i < resultCount; i++) {
     // get the time from the first element from every result array
-    let pairsTime = inputStringToDate(pairs[0].thisCall.midTime).getTime();
-    const arrivalTime = inputStringToDate(
-      parsedArrivalResults[0].thisCall.estimatedArrival,
-    ).getTime();
-    const departureTime = inputStringToDate(
-      parsedDepartureResults[0].thisCall.estimatedDeparture,
-    ).getTime();
+    let pairsTime = inputStringToDate(pairs[0] === undefined ? "" : pairs[0].thisCall.midTime).getTime();
+    const arrivalTime = inputStringToDate(parsedArrivalResults[0] === undefined ? "" : parsedArrivalResults[0].thisCall.estimatedArrival).getTime();
+    const departureTime = inputStringToDate(parsedDepartureResults[0] === undefined ? "" : parsedDepartureResults[0].thisCall.estimatedDeparture).getTime();
 
     // check if the time is undefined, null or NaN
     if (pairsTime === undefined || pairsTime === null || isNaN(pairsTime)) {
