@@ -24,6 +24,9 @@ jobs:
       - name: Build Project
         run: npm run build
 
+      - name: Post Build
+        run: 'echo "www.mfpl.ch" > ./dist/CNAME'
+
       - name: Upload build files
         uses: actions/upload-artifact@v4
         with:
