@@ -357,7 +357,7 @@
     <ViaField class="bg-blue-300 rounded-2xl p-3 mt-2" />
     <div class="text-gray-100 mt-2">
       <button
-        class="bg-blue-300 text-black p-1.5 rounded-xl cursor-pointer hover:bg-gray-900 hover:text-white duration-300"
+        class="bg-blue-300 text-black p-1.5 rounded-xl cursor-pointer hover:bg-gray-900 hover:text-white duration-300 hover:rounded-lg"
         @click="run"
       >
         Suchen

@@ -1,6 +1,6 @@
 <script setup>
-import {h, onMounted, onUpdated, ref, render} from "vue";
-  import {getTimeAsString, isDelayed} from "@/utils/DateUtils.js";
+  import { h, onMounted, onUpdated, ref, render } from "vue";
+  import { getTimeAsString, isDelayed } from "@/utils/DateUtils.js";
   import TrackRunner from "@/components/TrackRunner/TrackRunner.vue";
 
   const props = defineProps({
@@ -11,7 +11,6 @@ import {h, onMounted, onUpdated, ref, render} from "vue";
   const originQuayId = `${props.id}OriginQuay`; // id for originQuay tag
   const destinationQuayId = `${props.id}destinationQuay`; // id for destinationQuay tag
   const trackRunnerContainerId = `${props.id}TripLegViewTrackRunnerContainer`; // id for trackRunner container tag
-  const trackRunnerId = `${props.id}TripLegViewTrackRunner`; // id for trackRunner tag
   const mainContainerId = `${props.id}TripLegViewMainContainer`; // id for the main container
   const estimatedStartTimeId = `${props.id}TripLegViewEstimatedStartTime`;
   const estimatedEndTimeId = `${props.id}TripLegViewEstimatedEndTime`;
@@ -32,15 +31,21 @@ import {h, onMounted, onUpdated, ref, render} from "vue";
     const minutes = rawDuration % 60; // calculate the remaining minutes from the raw duration
 
     // check if the train si delayed at the start of the leg
-    if (isDelayed(props.leg.startTime, props.leg.calls[0].timetabledDeparture)) {
+    if (
+      isDelayed(props.leg.startTime, props.leg.calls[0].timetabledDeparture)
+    ) {
       document.getElementById(estimatedStartTimeId).style.color = "#ff1e1e"; // set the text color of the estimated time to red
     }
 
     // check if the train si delayed at the end of the leg
-    if (isDelayed(props.leg.endTime, props.leg.calls[props.leg.calls.length - 1].timetabledArrival)) {
+    if (
+      isDelayed(
+        props.leg.endTime,
+        props.leg.calls[props.leg.calls.length - 1].timetabledArrival,
+      )
+    ) {
       document.getElementById(estimatedEndTimeId).style.color = "#ff1e1e"; // set the text color of the estimated time to red
     }
-    console.log(trackRunnerId)
 
     const trackRunnerVNode = h(TrackRunner, {
       id: `${props.id}TripLegViewTrackRunner`,
@@ -48,10 +53,12 @@ import {h, onMounted, onUpdated, ref, render} from "vue";
       arrival: false,
       calls: props.leg.calls,
       useClick: false,
-      class: "bg-gray-700 rounded-xl"
+      class: "bg-gray-700 rounded-xl",
     });
 
-    const trackRunnerContainer = document.getElementById(trackRunnerContainerId);
+    const trackRunnerContainer = document.getElementById(
+      trackRunnerContainerId,
+    );
     render(trackRunnerVNode, trackRunnerContainer);
 
     // checks if the train is cancelled
@@ -152,13 +159,13 @@ import {h, onMounted, onUpdated, ref, render} from "vue";
               )
             }}
           </div>
-          <div class="font-bold" :id="estimatedStartTimeId">
+          <div :id="estimatedStartTimeId" class="font-bold">
             {{ getTimeAsString(new Date(props.leg.startTime), true) }}
           </div>
         </div>
         <div>{{ duration }}</div>
         <div>
-          <div class="font-bold" :id="estimatedEndTimeId">
+          <div :id="estimatedEndTimeId" class="font-bold">
             {{ getTimeAsString(new Date(props.leg.endTime), true) }}
           </div>
           <div>
@@ -194,9 +201,7 @@ import {h, onMounted, onUpdated, ref, render} from "vue";
       <div :id="destinationQuayId">{{ destinationQuay }}</div>
     </div>
   </div>
-  <div :id="trackRunnerContainerId" style="display: none">
-
-  </div>
+  <div :id="trackRunnerContainerId" style="display: none"></div>
 </template>
 
 <style scoped></style>
