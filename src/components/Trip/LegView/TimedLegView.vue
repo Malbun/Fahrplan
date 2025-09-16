@@ -11,7 +11,6 @@
   const originQuayId = `${props.id}OriginQuay`; // id for originQuay tag
   const destinationQuayId = `${props.id}destinationQuay`; // id for destinationQuay tag
   const trackRunnerContainerId = `${props.id}TripLegViewTrackRunnerContainer`; // id for trackRunner container tag
-  const trackRunnerId = `${props.id}TripLegViewTrackRunner`; // id for trackRunner tag
   const mainContainerId = `${props.id}TripLegViewMainContainer`; // id for the main container
   const estimatedStartTimeId = `${props.id}TripLegViewEstimatedStartTime`;
   const estimatedEndTimeId = `${props.id}TripLegViewEstimatedEndTime`;
@@ -47,7 +46,6 @@
     ) {
       document.getElementById(estimatedEndTimeId).style.color = "#ff1e1e"; // set the text color of the estimated time to red
     }
-    console.log(trackRunnerId);
 
     const trackRunnerVNode = h(TrackRunner, {
       id: `${props.id}TripLegViewTrackRunner`,
