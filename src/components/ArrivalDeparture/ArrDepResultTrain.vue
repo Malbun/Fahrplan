@@ -1,13 +1,12 @@
 <script setup>
   import { onMounted, onUpdated, ref } from "vue";
-  import { getDateAsString, getTimeAsString } from "@/utils/DateUtils.js";
+  import { getTimeAsString } from "@/utils/DateUtils.js";
 
   const props = defineProps({
     stopEvent: { type: Object, required: true },
   });
 
-  console.log(props.stopEvent);
-
+  // define the reactive variables for display the train details
   const hasPrevious = ref(true);
   const hasOnward = ref(true);
   const mobileTimeAlign = ref("");
@@ -19,160 +18,121 @@
   const timetabledDeparture = ref("08:15:00");
   const estimatedDeparture = ref("08:16:36");
   const quay = ref("");
-  const quayColor = ref("white");
+  const quayRed = ref(false);
   const serviceName = ref("IR13");
+  const display = ref(true);
 
+  // call render function on mounted and on updated event
   onMounted(render);
   onUpdated(render);
 
+  // displays the data
   function render() {
+    // set the reactive variables for the "direct to use variables"
     hasPrevious.value = props.stopEvent.hasPrevious;
     hasOnward.value = props.stopEvent.hasOnward;
     origin.value = props.stopEvent.origin;
     destination.value = props.stopEvent.destination;
     currentStation.value = props.stopEvent.thisCall.stationName;
     serviceName.value = props.stopEvent.serviceName;
+    quay.value = displayQuay(props.stopEvent.thisCall.estimatedQuay);
 
+    // check if the estimated quay is different from the planned quay
+    if (
+      props.stopEvent.thisCall.plannedQuay !==
+      props.stopEvent.thisCall.estimatedQuay
+    ) {
+      // check if the plannedQuay includes a /
+      if (!String(props.stopEvent.thisCall.plannedQuay).includes("/")) {
+        quayRed.value = true; // set the color from the quay text to red
+      }
+    }
+
+    // check if the stopEvent has a previous and onward property
     if (hasPrevious.value && hasOnward.value) {
-      mobileTimeAlign.value = "center";
+      mobileTimeAlign.value = "center"; // set the align type to center
+
+      // get every time as string and insert it into the reactive variable
       timetabledArrival.value = getTimeAsString(
         new Date(props.stopEvent.thisCall.timetabledArrival),
-        true
+        true,
       );
       estimatedArrival.value = getTimeAsString(
         new Date(props.stopEvent.thisCall.estimatedArrival),
-        true
+        true,
       );
       timetabledDeparture.value = getTimeAsString(
         new Date(props.stopEvent.thisCall.timetabledDeparture),
-        true
+        true,
       );
       estimatedDeparture.value = getTimeAsString(
         new Date(props.stopEvent.thisCall.estimatedDeparture),
-        true
+        true,
       );
     }
 
+    // check if the stopEvent has not a previous but an onward property
     if (!hasPrevious.value && hasOnward.value) {
-      mobileTimeAlign.value = "start";
+      mobileTimeAlign.value = "start"; // set the align type to start
+
+      // get the departure times as string and insert it into the reactive variables
       timetabledDeparture.value = getTimeAsString(
         new Date(props.stopEvent.thisCall.timetabledDeparture),
-        true
+        true,
       );
       estimatedDeparture.value = getTimeAsString(
         new Date(props.stopEvent.thisCall.estimatedDeparture),
-        true
+        true,
       );
     }
 
+    // check if the stopEvent has a previous but not an onward property
     if (hasPrevious.value && !hasOnward.value) {
-      mobileTimeAlign.value = "end";
+      mobileTimeAlign.value = "end"; // set the alig type to end
+
+      // get the arrival times as string and insert it into the reactive variables
       timetabledArrival.value = getTimeAsString(
         new Date(props.stopEvent.thisCall.timetabledArrival),
-        true
+        true,
       );
       estimatedArrival.value = getTimeAsString(
         new Date(props.stopEvent.thisCall.estimatedArrival),
-        true
+        true,
       );
     }
+  }
+
+  // This function creates a string from the given quay.
+  function displayQuay(quay) {
+    // check if the quay is null or undefined
+    if (quay === null || quay === undefined) {
+      return ""; // return an empty string
+    }
+    const rawQuay = String(quay); // set rawQuay to the string of the given quay
+
+    // check if rawQuay contains an empty string
+    if (rawQuay === "") {
+      return ""; // return an empty string
+    }
+
+    // check if the quay has any digits
+    if (/\d/.test(rawQuay)) {
+      return `Gleis: ${rawQuay}`; // return a string with the Gleis prefix
+    }
+
+    return `Kante: ${rawQuay}`; // return a string with the Kante prefix
   }
 </script>
 
 <template>
-  <div class="bg-gray-900 text-white p-2 mt-2 rounded-xl">
-    <!-- desktop -->
-    <div class="desktop">
-      <div class="flex flex-col space-y-1">
-        <div>{{ serviceName }}</div>
-        <div class="flex flex-row space-x-2 justify-between items-center">
-          <div v-if="hasPrevious" style="flex-shrink: 0">{{ origin }}</div>
-          <div v-if="hasPrevious">
-            <svg
-              height="20px"
-              width="auto"
-              style="flex-shrink: 1; transform: scale(-1, 1)"
-            >
-              <line
-                x1="5"
-                x2="100%"
-                y1="10"
-                y2="10"
-                style="stroke: white; stroke-width: 5px"
-              />
-              <line
-                x1="20"
-                x2="4"
-                y1="20"
-                y2="9"
-                style="stroke: white; stroke-width: 5px"
-              />
-              <line
-                x1="20"
-                x2="4"
-                y1="0"
-                y2="11"
-                style="stroke: white; stroke-width: 5px"
-              />
-            </svg>
-          </div>
-          <div
-            class="flex flex-row space-x-2 items-center"
-            style="flex-shrink: 0"
-          >
-            <div v-if="hasPrevious" style="flex-shrink: 0">
-              <div>{{ timetabledArrival }}</div>
-              <div class="font-bold">{{ estimatedArrival }}</div>
-            </div>
-            <div
-              class="flex flex-col justify-center items-center bg-gray-700 p-1.5 rounded-xl"
-              style="flex-shrink: 0"
-            >
-              <div class="">{{ currentStation }}</div>
-              <div class="quayDisplay">{{ quay }}</div>
-            </div>
-            <div v-if="hasOnward" style="flex-shrink: 0">
-              <div>{{ timetabledDeparture }}</div>
-              <div class="font-bold">{{ estimatedDeparture }}</div>
-            </div>
-          </div>
-          <div v-if="hasOnward">
-            <svg
-              height="20px"
-              width="auto"
-              style="flex-shrink: 1; transform: scale(-1, 1)"
-            >
-              <line
-                x1="5"
-                x2="100%"
-                y1="10"
-                y2="10"
-                style="stroke: white; stroke-width: 5px"
-              />
-              <line
-                x1="20"
-                x2="4"
-                y1="20"
-                y2="9"
-                style="stroke: white; stroke-width: 5px"
-              />
-              <line
-                x1="20"
-                x2="4"
-                y1="0"
-                y2="11"
-                style="stroke: white; stroke-width: 5px"
-              />
-            </svg>
-          </div>
-          <div v-if="hasOnward" style="flex-shrink: 0">{{ destination }}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- mobile -->
-    <div class="mobile">
-      <div class="flex flex-row items-center justify-center space-x-2">
+  <div v-if="display">
+    <div
+      class="justify-content-center text-white bg-gray-900 flex flex-row justify-center p-3 m-3 rounded-xl"
+    >
+      <div
+        class="flex flex-row items-center justify-center space-x-2"
+        style="width: 90%"
+      >
         <div>
           <div style="width: 20px; direction: rtl; white-space: nowrap">
             {{ serviceName }}
@@ -234,12 +194,16 @@
             </div>
             <div v-if="hasOnward">{{ destination }}</div>
           </div>
-          <div class="flex flex-col space-y-0.5">
+          <div class="flex flex-col space-y-0.5 ml-1">
             <div v-if="hasPrevious">
               <div>{{ timetabledArrival }}</div>
               <div class="font-bold">{{ estimatedArrival }}</div>
             </div>
-            <div class="quayDisplay" style="width: 50px; white-space: nowrap">
+            <div
+              :class="{ active: quayRed }"
+              class="quayDisplay"
+              style="width: 50px; white-space: nowrap"
+            >
               {{ quay }}
             </div>
             <div v-if="hasOnward">
@@ -259,26 +223,10 @@
   }
 
   .quayDisplay {
-    color: v-bind("quayColor");
+    color: white;
   }
 
-  @media only screen and (max-width: 700px) {
-    .mobile {
-      display: inline;
-    }
-
-    .desktop {
-      display: none;
-    }
-  }
-
-  @media only screen and (min-width: 700px) {
-    .mobile {
-      display: none;
-    }
-
-    .desktop {
-      display: inline;
-    }
+  .quayDisplay.active {
+    color: red;
   }
 </style>

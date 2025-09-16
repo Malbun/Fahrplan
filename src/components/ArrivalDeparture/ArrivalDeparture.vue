@@ -20,16 +20,23 @@
 
   // gets all information. Triggered by button click
   async function run() {
+    const resultContainer = document.getElementById("arrdepResultContainer"); // get the container for the results from the DOM
+
+    const overrideNode = h("div", null, null); // create an empty override node
+    render(overrideNode, resultContainer); // render the override node to remove old data
+
+    // get the results from the API
     const allResults = await processArrivalDeparture(
       stationStore.station,
       dateStore.date,
       resultCountStore.resultCount,
     );
 
-    const resultContainer = document.getElementById("arrdepResultContainer");
+    const arrDepTrainArray = []; // init array for each ArrDepResult
 
-    const arrDepTrainArray = [];
+    // iterate over the results
     for (const result of allResults) {
+      // create a virtual Node of ArrDepResultTrain from the current train
       const currentArrivalDeparture = h(
         ArrDepResultTrain,
         {
@@ -37,12 +44,11 @@
         },
         null,
       );
-      arrDepTrainArray.push(currentArrivalDeparture);
+      arrDepTrainArray.push(currentArrivalDeparture); // add the created virtual Node to the array for the ArrDepResults
     }
 
-    const resultDivVNode = h("div", arrDepTrainArray);
-    render(resultDivVNode, resultContainer);
-
+    const resultDivVNode = h("div", arrDepTrainArray); // create a virtual Node containing all ArrDepResults
+    render(resultDivVNode, resultContainer); // render the combined virtual Node
   }
 </script>
 

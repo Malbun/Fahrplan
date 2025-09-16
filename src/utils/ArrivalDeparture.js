@@ -157,7 +157,13 @@ export const processArrivalDeparture = async (
   // loop over each object of the unparsed arrival stop events array
   for (const event of unparsedArrivalStopEvents) {
     const parsedResult = {}; // init result object
-    const stopEvent = event["StopEvent"]; // get the stop event
+    let stopEvent; // init variable for stopEvent
+    // check if an object stopEvent exists on event
+    if (Object.hasOwn(event, "StopEvent")) {
+      stopEvent = event["StopEvent"]; // put the stopEvent Object into the stopEvent variable
+    } else {
+      stopEvent = event; // put the whole event variable into the stopEvent variable
+    }
 
     const service = stopEvent["Service"]; // get the service object
     const previousCall = stopEvent["PreviousCall"]; // get the previous call object
@@ -441,14 +447,31 @@ export const processArrivalDeparture = async (
 
   const finalResult = []; // init array for the final result
 
-  console.log(parsedArrivalResults);
-
   // loop resultCount times
   for (let i = 0; i < resultCount; i++) {
+    // check if all arrays are empty
+    if (
+      pairs.length === 0 &&
+      parsedArrivalResults.length === 0 &&
+      parsedDepartureResults.length === 0
+    ) {
+      break; // stops the loop
+    }
+
     // get the time from the first element from every result array
-    let pairsTime = inputStringToDate(pairs[0] === undefined ? "" : pairs[0].thisCall.midTime).getTime();
-    const arrivalTime = inputStringToDate(parsedArrivalResults[0] === undefined ? "" : parsedArrivalResults[0].thisCall.estimatedArrival).getTime();
-    const departureTime = inputStringToDate(parsedDepartureResults[0] === undefined ? "" : parsedDepartureResults[0].thisCall.estimatedDeparture).getTime();
+    let pairsTime = inputStringToDate(
+      pairs[0] === undefined ? "" : pairs[0].thisCall.midTime,
+    ).getTime();
+    const arrivalTime = inputStringToDate(
+      parsedArrivalResults[0] === undefined
+        ? ""
+        : parsedArrivalResults[0].thisCall.estimatedArrival,
+    ).getTime();
+    const departureTime = inputStringToDate(
+      parsedDepartureResults[0] === undefined
+        ? ""
+        : parsedDepartureResults[0].thisCall.estimatedDeparture,
+    ).getTime();
 
     // check if the time is undefined, null or NaN
     if (pairsTime === undefined || pairsTime === null || isNaN(pairsTime)) {

@@ -38,6 +38,7 @@ export const timeToDateString = (time: string): string => {
   return `2025-01-01T${time}Z`; // returns the processed string
 };
 
+// get the average time of two times
 export const getAverageTime = (d1: Date, d2: Date): Date => {
   const d1millis: number = d1.getTime();
   const d2millis: number = d2.getTime();
