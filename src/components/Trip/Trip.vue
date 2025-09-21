@@ -130,9 +130,16 @@
       processedTrip.legs = processTrip(trip); // process the trip
       processedTrip.duration = getDurationFromString(trip["Duration"]); // set duration from trip
       // check if an Unplanned tag exists
-      // The Unplanned tag contains information if the train runs
+      // The Unplanned tag contains information if the train has special changes in the timetable
       if (Object.hasOwn(trip, "Unplanned")) {
-        processedTrip.cancelled = trip["Unplanned"]; // get the value
+        let cancelledInLegs = false; // init cancelledInLeg variable. Contains a bool wich tells if a timed leg is cancelled
+        // iterate over all legs
+        for (const leg of processedTrip.legs) {
+          // check if the leg is a timed leg
+          if (leg.type === "timed") {
+            cancelledInLegs = cancelledInLegs || leg.cancelled; // set cancelledInLeg to cancelledInLeg OR cancelled fiel of the leg to keep a truth value.
+          }
+        }
       } else {
         processedTrip.cancelled = false; // set the default value to false
       }
@@ -211,12 +218,27 @@
     leg.ptMode = service["Mode"]["PtMode"]; // set mode from PtMode
     leg.modeShort = service["Mode"]["ShortName"]["Text"]; // get the name of the service
 
+    // Process the unplanned tag
+    // The Unplanned tag contains information if the train runs with any changes in the timetable
+
+    leg.cancelled = false; // set the default value to false
+
     // check if an Unplanned tag exists
-    // The Unplanned tag contains information if the train runs
     if (Object.hasOwn(service, "Unplanned")) {
-      leg.cancelled = service["Unplanned"]; // get the default value
-    } else {
-      leg.cancelled = false; // set the default value to false
+      const attributes = service["Attribute"]; // get the attributes from the service tag
+
+      // check if attributes is an Array
+      if (Array.isArray(attributes)) {
+        let hasBA = false; // init hasBA variable. BA -> Timetable Change
+        // iterate over each attribute
+        for (const attribute of attributes) {
+          hasBA = hasBA || attribute["Code"] === "A__BA"; // set hasBAed to (has a timetable change code) OR hasBA to keep a truth value
+        }
+
+        leg.cancelled = !hasBA; // set leg.cancelled to the inverted value of hasBA
+      } else {
+        leg.cancelled = !(attributes["Code"] === "A__BA"); // set leg.cancelled to has a timetable change code
+      }
     }
 
     // check if the legBoard has an estimated time
