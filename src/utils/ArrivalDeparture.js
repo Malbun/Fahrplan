@@ -585,3 +585,24 @@ function processOtherCall(call) {
 
   return callParsed; // return the result object
 }
+
+// This function creates a string from the given quay.
+export const quayToString = (quay) => {
+  // check if the quay is null or undefined
+  if (quay === null || quay === undefined) {
+    return ""; // return an empty string
+  }
+  const rawQuay = String(quay); // set rawQuay to the string of the given quay
+
+  // check if rawQuay contains an empty string
+  if (rawQuay === "") {
+    return ""; // return an empty string
+  }
+
+  // check if the quay has any digits
+  if (/\d/.test(rawQuay)) {
+    return `Gleis: ${rawQuay}`; // return a string with the Gleis prefix
+  }
+
+  return `Kante: ${rawQuay}`; // return a string with the Kante prefix
+};
