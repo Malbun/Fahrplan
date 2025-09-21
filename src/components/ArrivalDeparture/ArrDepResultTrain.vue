@@ -1,6 +1,8 @@
 <script setup>
   import { onMounted, onUpdated, ref } from "vue";
   import { getTimeAsString } from "@/utils/DateUtils.js";
+  import { quayToString } from "@/utils/ArrivalDeparture.js";
+  import ArrDepTrainRunner from "@/components/ArrivalDeparture/ArrDepTrainRunner.vue";
 
   const props = defineProps({
     stopEvent: { type: Object, required: true },
@@ -20,7 +22,7 @@
   const quay = ref("");
   const quayRed = ref(false);
   const serviceName = ref("IR13");
-  const display = ref(true);
+  const displayMode = ref(true);
 
   // call render function on mounted and on updated event
   onMounted(render);
@@ -35,7 +37,7 @@
     destination.value = props.stopEvent.destination;
     currentStation.value = props.stopEvent.thisCall.stationName;
     serviceName.value = props.stopEvent.serviceName;
-    quay.value = displayQuay(props.stopEvent.thisCall.estimatedQuay);
+    quay.value = quayToString(props.stopEvent.thisCall.estimatedQuay);
 
     // check if the estimated quay is different from the planned quay
     if (
@@ -102,117 +104,105 @@
     }
   }
 
-  // This function creates a string from the given quay.
-  function displayQuay(quay) {
-    // check if the quay is null or undefined
-    if (quay === null || quay === undefined) {
-      return ""; // return an empty string
-    }
-    const rawQuay = String(quay); // set rawQuay to the string of the given quay
-
-    // check if rawQuay contains an empty string
-    if (rawQuay === "") {
-      return ""; // return an empty string
-    }
-
-    // check if the quay has any digits
-    if (/\d/.test(rawQuay)) {
-      return `Gleis: ${rawQuay}`; // return a string with the Gleis prefix
-    }
-
-    return `Kante: ${rawQuay}`; // return a string with the Kante prefix
+  function toggleView() {
+    displayMode.value = !displayMode.value;
   }
 </script>
 
 <template>
-  <div v-if="display">
-    <div
-      class="justify-content-center text-white bg-gray-900 flex flex-row justify-center p-3 m-3 rounded-xl"
-    >
+  <div @click="toggleView">
+    <div v-if="displayMode">
       <div
-        class="flex flex-row items-center justify-center space-x-2"
-        style="width: 90%"
+        class="justify-content-center text-white bg-gray-900 flex flex-row justify-center p-3 m-3 rounded-xl"
       >
-        <div>
-          <div style="width: 20px; direction: rtl; white-space: nowrap">
-            {{ serviceName }}
+        <div
+          class="flex flex-row items-center justify-center space-x-2"
+          style="width: 90%"
+        >
+          <div>
+            <div style="width: 20px; direction: rtl; white-space: nowrap">
+              {{ serviceName }}
+            </div>
           </div>
-        </div>
-        <div class="flex flex-row justify-center space-x-1.5 dynamicAlign">
-          <div class="flex flex-col items-center space-y-1">
-            <div v-if="hasPrevious">{{ origin }}</div>
-            <div v-if="hasPrevious">
-              <svg width="20px" height="38px" style="transform: scale(1, -1)">
-                <line
-                  x1="50%"
-                  y1="5"
-                  x2="50%"
-                  y2="100%"
-                  style="stroke: white; stroke-width: 5px"
-                />
-                <line
-                  x1="0"
-                  y1="18"
-                  x2="11"
-                  y2="5"
-                  style="stroke: white; stroke-width: 5px"
-                />
-                <line
-                  x1="20"
-                  y1="18"
-                  x2="9"
-                  y2="5"
-                  style="stroke: white; stroke-width: 5px"
-                />
-              </svg>
+          <div class="flex flex-row justify-center space-x-1.5 dynamicAlign">
+            <div class="flex flex-col items-center space-y-1">
+              <div v-if="hasPrevious">{{ origin }}</div>
+              <div v-if="hasPrevious">
+                <svg width="20px" height="38px" style="transform: scale(1, -1)">
+                  <line
+                    x1="50%"
+                    y1="5"
+                    x2="50%"
+                    y2="100%"
+                    style="stroke: white; stroke-width: 5px"
+                  />
+                  <line
+                    x1="0"
+                    y1="18"
+                    x2="11"
+                    y2="5"
+                    style="stroke: white; stroke-width: 5px"
+                  />
+                  <line
+                    x1="20"
+                    y1="18"
+                    x2="9"
+                    y2="5"
+                    style="stroke: white; stroke-width: 5px"
+                  />
+                </svg>
+              </div>
+              <div class="bg-gray-700 p-1 rounded-lg">{{ currentStation }}</div>
+              <div v-if="hasOnward">
+                <svg width="20px" height="38px" style="transform: scale(1, -1)">
+                  <line
+                    x1="50%"
+                    y1="5"
+                    x2="50%"
+                    y2="100%"
+                    style="stroke: white; stroke-width: 5px"
+                  />
+                  <line
+                    x1="0"
+                    y1="18"
+                    x2="11"
+                    y2="5"
+                    style="stroke: white; stroke-width: 5px"
+                  />
+                  <line
+                    x1="20"
+                    y1="18"
+                    x2="9"
+                    y2="5"
+                    style="stroke: white; stroke-width: 5px"
+                  />
+                </svg>
+              </div>
+              <div v-if="hasOnward">{{ destination }}</div>
             </div>
-            <div class="bg-gray-700 p-1 rounded-lg">{{ currentStation }}</div>
-            <div v-if="hasOnward">
-              <svg width="20px" height="38px" style="transform: scale(1, -1)">
-                <line
-                  x1="50%"
-                  y1="5"
-                  x2="50%"
-                  y2="100%"
-                  style="stroke: white; stroke-width: 5px"
-                />
-                <line
-                  x1="0"
-                  y1="18"
-                  x2="11"
-                  y2="5"
-                  style="stroke: white; stroke-width: 5px"
-                />
-                <line
-                  x1="20"
-                  y1="18"
-                  x2="9"
-                  y2="5"
-                  style="stroke: white; stroke-width: 5px"
-                />
-              </svg>
-            </div>
-            <div v-if="hasOnward">{{ destination }}</div>
-          </div>
-          <div class="flex flex-col space-y-0.5 ml-1">
-            <div v-if="hasPrevious">
-              <div>{{ timetabledArrival }}</div>
-              <div class="font-bold">{{ estimatedArrival }}</div>
-            </div>
-            <div
-              :class="{ active: quayRed }"
-              class="quayDisplay"
-              style="width: 50px; white-space: nowrap"
-            >
-              {{ quay }}
-            </div>
-            <div v-if="hasOnward">
-              <div class="">{{ timetabledDeparture }}</div>
-              <div class="font-bold">{{ estimatedDeparture }}</div>
+            <div class="flex flex-col space-y-0.5 ml-1">
+              <div v-if="hasPrevious">
+                <div>{{ timetabledArrival }}</div>
+                <div class="font-bold">{{ estimatedArrival }}</div>
+              </div>
+              <div
+                :class="{ active: quayRed }"
+                class="quayDisplay"
+                style="width: 50px; white-space: nowrap"
+              >
+                {{ quay }}
+              </div>
+              <div v-if="hasOnward">
+                <div class="">{{ timetabledDeparture }}</div>
+                <div class="font-bold">{{ estimatedDeparture }}</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div v-if="!displayMode" class="text-white bg-gray-900 p-3 m-3 rounded-xl">
+      <ArrDepTrainRunner :stop-event="props.stopEvent" />
     </div>
   </div>
 </template>

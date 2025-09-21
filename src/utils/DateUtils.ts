@@ -27,9 +27,8 @@ export const inputStringToDate = (input): Date => {
 export const isDelayed = (time1: string, time2: string): boolean => {
   const time1Date: Date = new Date(time1); // covert time1 to date
   const time2Date: Date = new Date(time2); // convert time2 start time to date
-  const diffTime = Math.abs(time1Date.getTime() - time2Date.getTime()); // calculate difference between the dates
-  const diffMinutes = Math.floor(diffTime / (1000 * 60)); // convert difference from milliseconds to minutes
-
+  const diffTime = time2Date.getTime() - time1Date.getTime(); // calculate difference between the dates
+  const diffMinutes = diffTime / (1000 * 60); // convert difference from milliseconds to minutes
   return diffMinutes >= 3; // return true if the difference is greater or equal to 3 minutes
 };
 
