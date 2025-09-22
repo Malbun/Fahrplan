@@ -186,8 +186,7 @@
                 <div class="font-bold">{{ estimatedArrival }}</div>
               </div>
               <div
-                :class="{ active: quayRed }"
-                class="quayDisplay"
+                :class="{ textRed: quayRed }"
                 style="width: 50px; white-space: nowrap"
               >
                 {{ quay }}
@@ -212,11 +211,7 @@
     align-items: v-bind("mobileTimeAlign");
   }
 
-  .quayDisplay {
-    color: white;
-  }
-
-  .quayDisplay.active {
+  .textRed {
     color: red;
   }
 </style>
