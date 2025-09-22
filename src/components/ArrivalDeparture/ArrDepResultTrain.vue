@@ -152,7 +152,9 @@
                   />
                 </svg>
               </div>
-              <div class="bg-gray-700 p-1 rounded-lg">{{ currentStation }}</div>
+              <div class="bg-gray-700 p-1.5 rounded-lg">
+                {{ currentStation }}
+              </div>
               <div v-if="hasOnward">
                 <svg width="20px" height="38px" style="transform: scale(1, -1)">
                   <line
