@@ -152,7 +152,9 @@
                   />
                 </svg>
               </div>
-              <div class="bg-gray-700 p-1 rounded-lg">{{ currentStation }}</div>
+              <div class="bg-gray-700 p-1.5 rounded-lg">
+                {{ currentStation }}
+              </div>
               <div v-if="hasOnward">
                 <svg width="20px" height="38px" style="transform: scale(1, -1)">
                   <line
@@ -186,8 +188,7 @@
                 <div class="font-bold">{{ estimatedArrival }}</div>
               </div>
               <div
-                :class="{ active: quayRed }"
-                class="quayDisplay"
+                :class="{ textRed: quayRed }"
                 style="width: 50px; white-space: nowrap"
               >
                 {{ quay }}
@@ -212,11 +213,7 @@
     align-items: v-bind("mobileTimeAlign");
   }
 
-  .quayDisplay {
-    color: white;
-  }
-
-  .quayDisplay.active {
+  .textRed {
     color: red;
   }
 </style>
