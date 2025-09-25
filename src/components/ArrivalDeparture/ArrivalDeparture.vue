@@ -2,7 +2,7 @@
   import Station from "@/components/Station.vue";
   import { useStationStore } from "@/stores/StationStore.js";
   import { useResultCountStore } from "@/stores/ResultCountStore.js";
-  import {h, onMounted, ref, render} from "vue";
+  import { h, onMounted, ref, render } from "vue";
   import { useDateStore } from "@/stores/DateStore.js";
   import { processArrivalDeparture } from "@/utils/ArrivalDeparture.js";
   import ArrDepResultTrain from "@/components/ArrivalDeparture/ArrDepResultTrain.vue";
@@ -90,7 +90,7 @@
       </button>
     </div>
     <WaitingAnimation v-show="!resultPresent" />
-    <div id="arrdepResultContainer" v-show="resultPresent"></div>
+    <div v-show="resultPresent" id="arrdepResultContainer"></div>
   </div>
 </template>
 

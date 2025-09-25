@@ -10,7 +10,7 @@
   import { useApikeyStore } from "@/stores/ApikeyStore.js";
   import { XMLParser } from "fast-xml-parser";
   import { getDurationFromString } from "@/utils/TripUtils.ts";
-  import {h, ref, render} from "vue";
+  import { h, ref, render } from "vue";
   import TripResultList from "@/components/Trip/TripResultList.vue";
   import ViaField from "@/components/Trip/ViaField.vue";
   import { useViaStore } from "@/stores/ViaStore.js";
@@ -391,8 +391,8 @@
       >
         Suchen
       </button>
-      <WaitingAnimation v-show="!resultPresent"/>
-      <div id="tripResultContainer" v-show="resultPresent"></div>
+      <WaitingAnimation v-show="!resultPresent" />
+      <div v-show="resultPresent" id="tripResultContainer"></div>
     </div>
   </div>
 </template>
