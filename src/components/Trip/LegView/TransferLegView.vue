@@ -1,5 +1,5 @@
 <script setup>
-  import { onMounted, onUpdated, ref } from "vue";
+  import { onMounted, ref } from "vue";
   import { BsPersonWalking } from "vue-icons-plus/bs";
 
   const props = defineProps({
@@ -8,7 +8,6 @@
   });
 
   onMounted(renderInformation);
-  onUpdated(renderInformation);
 
   const displayIcon = ref(true);
   const displayMinutes = ref(true);
