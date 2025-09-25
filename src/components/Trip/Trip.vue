@@ -10,10 +10,13 @@
   import { useApikeyStore } from "@/stores/ApikeyStore.js";
   import { XMLParser } from "fast-xml-parser";
   import { getDurationFromString } from "@/utils/TripUtils.ts";
-  import { h, render } from "vue";
+  import {h, ref, render} from "vue";
   import TripResultList from "@/components/Trip/TripResultList.vue";
   import ViaField from "@/components/Trip/ViaField.vue";
   import { useViaStore } from "@/stores/ViaStore.js";
+  import WaitingAnimation from "@/components/WaitingAnimation.vue";
+
+  const resultPresent = ref(true); // Stores the resultPresent state. True: Shows result. False: Shows waiting animation
 
   // stores
   const resultCountStore = useResultCountStore();
@@ -26,6 +29,8 @@
   resultCountStore.set(10); // set result counter default to 10
 
   async function run() {
+    resultPresent.value = false; // set the resultPresent to false
+
     const originDidokResult = await getStationDetails(
       tripStation1Store.tripStation1,
     ); // get the station details for station1
@@ -154,6 +159,8 @@
       null,
     );
     render(tripResultElement, tripResultContainer);
+
+    resultPresent.value = true; // set the resultPresent to true
   }
 
   // extracts the needed information from a trip from the result
@@ -384,7 +391,8 @@
       >
         Suchen
       </button>
-      <div id="tripResultContainer"></div>
+      <WaitingAnimation v-show="!resultPresent"/>
+      <div id="tripResultContainer" v-show="resultPresent"></div>
     </div>
   </div>
 </template>

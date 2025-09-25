@@ -2,14 +2,17 @@
   import Station from "@/components/Station.vue";
   import { useStationStore } from "@/stores/StationStore.js";
   import { useResultCountStore } from "@/stores/ResultCountStore.js";
-  import { h, onMounted, render } from "vue";
+  import {h, onMounted, ref, render} from "vue";
   import { useDateStore } from "@/stores/DateStore.js";
   import { processArrivalDeparture } from "@/utils/ArrivalDeparture.js";
   import ArrDepResultTrain from "@/components/ArrivalDeparture/ArrDepResultTrain.vue";
+  import WaitingAnimation from "@/components/WaitingAnimation.vue";
 
   const stationStore = useStationStore();
   const resultCountStore = useResultCountStore();
   const dateStore = useDateStore();
+
+  const resultPresent = ref(true); // Stores the resultPresent state. True: Shows result. False: Shows waiting animation
 
   onMounted(init); // call init function when the component gets loaded
 
@@ -24,6 +27,8 @@
 
     const overrideNode = h("div", null, null); // create an empty override node
     render(overrideNode, resultContainer); // render the override node to remove old data
+
+    resultPresent.value = false; // set the resultPresent to false
 
     // get the results from the API
     const allResults = await processArrivalDeparture(
@@ -49,6 +54,8 @@
 
     const resultDivVNode = h("div", arrDepTrainArray); // create a virtual Node containing all ArrDepResults
     render(resultDivVNode, resultContainer); // render the combined virtual Node
+
+    resultPresent.value = true; // set the resultPresent to true
   }
 </script>
 
@@ -82,7 +89,8 @@
         Suchen
       </button>
     </div>
-    <div id="arrdepResultContainer"></div>
+    <WaitingAnimation v-show="!resultPresent" />
+    <div id="arrdepResultContainer" v-show="resultPresent"></div>
   </div>
 </template>
 
