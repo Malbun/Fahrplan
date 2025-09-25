@@ -4,7 +4,8 @@ English version below.
 
 ## Deutsche Version
 
-Hier findest du eine Web-basierte Fahrplan-App für die Schweiz.  
+Hier findest du eine Web-basierte Fahrplan-App für die Schweiz.
+
 ### Funktionen:
 
 - Ankunft- und Abfahrtsanzeiger (Macht 2 Anfragen mit dem API-Key)
@@ -13,7 +14,8 @@ Hier findest du eine Web-basierte Fahrplan-App für die Schweiz.
 ### Erste Schritte
 
 Diese App nutzt die OJP 2.0 API von [opentransportdata.swiss](https://opentransportdata.swiss).  
-Es wird ein API-Key für die OJP-API benötigt.  
+Es wird ein API-Key für die OJP-API benötigt.
+
 1. Gehe zum [opentransportdata.swiss API-Manager](https://api-manager.opentransportdata.swiss/)
 2. Logge dich mit deinem Account ein oder erstelle einen neuen
 3. Scrolle nach unten und klicke auf "Read more" im OJP 2.0 Kasten
@@ -31,8 +33,7 @@ Viel Spass
 
 ## English version
 
-This is a web based application for the swiss public transport network.  
-  
+This is a web based application for the swiss public transport network.
 
 Note: The whole app is only available in german.
 
