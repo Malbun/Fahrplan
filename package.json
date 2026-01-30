@@ -14,7 +14,7 @@
   "dependencies": {
     "@eslint/js": "^9.34.0",
     "@tailwindcss/vite": "^4.1.11",
-    "fast-xml-parser": "^5.2.5",
+    "fast-xml-parser": "^5.3.4",
     "fuse.js": "^7.1.0",
     "pinia": "^3.0.3",
     "tailwindcss": "^4.1.11",
